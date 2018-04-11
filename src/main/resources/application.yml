@@ -1,2 +1,2 @@
 server:
-  port: 1981
+  port: ${SHOP_RULES_GENERATOR_PORT}
