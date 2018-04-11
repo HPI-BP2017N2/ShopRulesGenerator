@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ShopRulesDoNotExistException extends Exception {
 
-    ShopRulesDoNotExistException(String message) {
+    public ShopRulesDoNotExistException(String message) {
         super(message);
     }
 }
