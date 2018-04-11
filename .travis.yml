@@ -1,0 +1,6 @@
+language: java
+sudo: false
+script: mvn clean verify
+
+env:
+  - SHOP_RULES_GENERATOR_PORT=1981

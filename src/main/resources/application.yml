@@ -1,0 +1,2 @@
+server:
+  port: ${SHOP_RULES_GENERATOR_PORT}
