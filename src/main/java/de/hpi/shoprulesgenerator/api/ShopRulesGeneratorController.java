@@ -19,7 +19,7 @@ public class ShopRulesGeneratorController {
 
     private final IShopRulesGeneratorService service;
 
-    @RequestMapping(value = "/getRules/{shopID}", method = GET)
+    @RequestMapping(value = "/getRules/{shopID}", method = GET, produces = "application/json")
     public ShopRules getRules(@PathVariable long shopID) throws ShopRulesDoNotExistException {
         return getService().getRules(shopID);
     }
