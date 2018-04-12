@@ -5,10 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.jsoup.nodes.Document;
 
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 
 @Setter(AccessLevel.PRIVATE)
 @Getter
@@ -16,55 +15,69 @@ import java.util.Map;
 public class IdealoOffer {
 
     @JsonIgnore
-    private EnumMap<ProductAttribute, String[]> offerAttributes;
+    private EnumMap<OfferAttribute, List<String>> offerAttributes;
+
+    @JsonIgnore
+    @Setter private Document fetchedPage;
 
     public IdealoOffer() {
-        setOfferAttributes(new EnumMap<>(ProductAttribute.class));
+        setOfferAttributes(new EnumMap<>(OfferAttribute.class));
     }
 
-    private String[] toArray(Object value) {
-        return new String[] { String.valueOf(value) };
+    private List<String> toList(Object object) {
+        return Collections.singletonList(String.valueOf(object));
     }
 
-    private String[] toArray(Map map) {
+    private List<String> toList(Map map) {
         Collection values = map.values();
-        String[] mapValues = new String[values.size()];
-        int index = 0;
+        List<String> stringValues = new LinkedList<>();
         for (Object value : values) {
-            mapValues[index++] = String.valueOf(value);
+            stringValues.add(String.valueOf(value));
         }
-        return mapValues;
+        return stringValues;
+    }
+
+    private List<String> toList(String[] array) {
+        return Arrays.asList(array);
     }
 
     public void setEans(String[] eans) {
-        getOfferAttributes().put(ProductAttribute.EAN, eans);
+        getOfferAttributes().put(OfferAttribute.EAN, toList(eans));
     }
 
     public void setSku(String sku) {
-        getOfferAttributes().put(ProductAttribute.SKU, toArray(sku));
+        getOfferAttributes().put(OfferAttribute.SKU, toList(sku));
     }
 
     public void setHans(String[] hans) {
-        getOfferAttributes().put(ProductAttribute.HAN, hans);
+        getOfferAttributes().put(OfferAttribute.HAN, toList(hans));
     }
 
     public void setTitles(Map<String, String> titles) {
-        getOfferAttributes().put(ProductAttribute.TITLE, toArray(titles));
+        getOfferAttributes().put(OfferAttribute.TITLE, toList(titles));
     }
 
     public void setCategoryPaths(String[] categoryPaths) {
-        getOfferAttributes().put(ProductAttribute.CATEGORY, categoryPaths);
+        getOfferAttributes().put(OfferAttribute.CATEGORY, toList(categoryPaths));
     }
 
     public void setBrandName(String brandName) {
-        getOfferAttributes().put(ProductAttribute.BRAND, toArray(brandName));
+        getOfferAttributes().put(OfferAttribute.BRAND, toList(brandName));
     }
 
     public void setPrice(Map<String, Integer> price) {
-        getOfferAttributes().put(ProductAttribute.PRICE, toArray(price));
+        getOfferAttributes().put(OfferAttribute.PRICE, toList(price));
     }
 
     public void setDescription(Map<String, String> description) {
-        getOfferAttributes().put(ProductAttribute.DESCRIPTION, toArray(description));
+        getOfferAttributes().put(OfferAttribute.DESCRIPTION, toList(description));
+    }
+
+    public void setUrls(Map<String, String> urls) {
+        getOfferAttributes().put(OfferAttribute.URL, toList(urls));
+    }
+
+    List<String> getOfferAttribute(OfferAttribute attribute) {
+        return getOfferAttributes().get(attribute);
     }
 }
