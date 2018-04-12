@@ -1,6 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
-public enum ProductAttribute {
+public enum OfferAttribute {
     EAN,
     HAN,
     SKU,
@@ -8,5 +8,6 @@ public enum ProductAttribute {
     CATEGORY,
     BRAND,
     PRICE,
-    DESCRIPTION
+    DESCRIPTION,
+    URL
 }
