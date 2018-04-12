@@ -21,6 +21,8 @@ idealobridge:
 shoprulesgenerator-settings:
   fetchDelay: 12000
   userAgent: "Mozilla/5.0 (compatible; HPI-BPN2-2017/2.1; https://hpi.de/naumann/teaching/bachelorprojekte/inventory-management.html)"
+  urlCleanerRoot: "http://localhost:2118"
+  cleanUrlRoute: "/clean/"
 
 logging:
   level:
