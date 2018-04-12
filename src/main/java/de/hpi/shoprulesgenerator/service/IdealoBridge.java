@@ -1,6 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
-import de.hpi.shoprulesgenerator.properties.IdealoBridgeProperties;
+import de.hpi.shoprulesgenerator.properties.IdealoBridgeConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ public class IdealoBridge {
 
     private final RestTemplate oAuthRestTemplate;
 
-    private final IdealoBridgeProperties properties;
+    private final IdealoBridgeConfig properties;
 
-    public List<IdealoOffer> getSampleOffers(long shopID) {
+    List<IdealoOffer> getSampleOffers(long shopID) {
         return getOAuthRestTemplate().getForObject(getSampleOffersURI(shopID), IdealoOffers.class);
     }
 
