@@ -20,4 +20,10 @@ public class ShopRulesGeneratorConfig {
 
     @NotBlank
     private String userAgent;
+
+    @NotBlank
+    private String urlCleanerRoot;
+
+    @NotBlank
+    private String cleanUrlRoute;
 }

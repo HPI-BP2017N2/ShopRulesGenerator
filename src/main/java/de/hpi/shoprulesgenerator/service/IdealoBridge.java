@@ -13,7 +13,6 @@ import java.net.URI;
 import java.util.List;
 
 @Getter(AccessLevel.PRIVATE)
-@Setter(AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Component
 public class IdealoBridge {
