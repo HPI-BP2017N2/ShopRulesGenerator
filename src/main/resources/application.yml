@@ -6,6 +6,14 @@ spring:
       mongodb:
         host: ${MONGO_IP}
         port: ${MONGO_PORT}
-        username: ${MONGO_URLCLEANER_USER}
+        username: ${MONGO_SHOP_RULES_GENERATOR_USER}
         password: ${MONGO_PASSWORD}
         database: data
+
+idealobridge:
+  oAuth2ClientId: ${CLIENT_ID}
+  oAuth2ClientSecret: ${CLIENT_SECRET}
+  accessTokenURI: ${ACCESS_TOKEN_URI}
+  apiUrl: ${API_URL}
+  sampleOffersRoute: "/sampleOffers/"
+  maxOffers: 10
