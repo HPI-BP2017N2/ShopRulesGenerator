@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 @Primary
-public class IdealoBridgeProperties {
+public class IdealoBridgeConfig {
 
     private int maxOffers;
     private String oAuth2ClientId;

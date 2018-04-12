@@ -17,11 +17,11 @@ import org.springframework.web.client.RestTemplate;
 @Setter(AccessLevel.PRIVATE)
 @Configuration
 @EnableOAuth2Client
-@EnableConfigurationProperties(IdealoBridgeProperties.class)
+@EnableConfigurationProperties(IdealoBridgeConfig.class)
 public class OAuthConfig {
 
     @Autowired
-    private IdealoBridgeProperties clientProperties;
+    private IdealoBridgeConfig clientProperties;
 
     @Bean
     public RestTemplate oAuthRestTemplate() {
