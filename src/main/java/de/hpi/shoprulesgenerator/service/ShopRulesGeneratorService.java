@@ -35,6 +35,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private void generateRule(long shopID) {
         IdealoOffers idealoOffers = getIdealoBridge().getSampleOffers(shopID);
         getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
+
     }
 
 }
