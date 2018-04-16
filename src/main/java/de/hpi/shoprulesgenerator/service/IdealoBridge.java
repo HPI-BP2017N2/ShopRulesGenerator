@@ -4,13 +4,11 @@ import de.hpi.shoprulesgenerator.properties.IdealoBridgeConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @Getter(AccessLevel.PRIVATE)
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class IdealoBridge {
 
     private final IdealoBridgeConfig properties;
 
-    List<IdealoOffer> getSampleOffers(long shopID) {
+    IdealoOffers getSampleOffers(long shopID) {
         return getOAuthRestTemplate().getForObject(getSampleOffersURI(shopID), IdealoOffers.class);
     }
 
