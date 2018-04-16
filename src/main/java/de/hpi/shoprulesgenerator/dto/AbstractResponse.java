@@ -21,7 +21,7 @@ public abstract class AbstractResponse {
         return this;
     }
 
-    ResponseEntity<Object> send(HttpStatus status) {
+    public ResponseEntity<Object> send(HttpStatus status) {
         setCode(status.value());
         setStatus(status.getReasonPhrase());
         return new ResponseEntity<>(this, status);
