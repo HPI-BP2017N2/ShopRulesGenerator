@@ -3,6 +3,7 @@ package de.hpi.shoprulesgenerator.service;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*:containsOwn(#attr#)";
 
     @Override
-    public List<Selector> buildSelectors(IdealoOffer offer, String attribute) {
-        return offer.getFetchedPage().select(buildCSSQuery(attribute))
+    public List<Selector> buildSelectors(Document html, String attribute) {
+        return html.select(buildCSSQuery(attribute))
                 .stream()
                 .map(occurrence -> new TextNodeSelector(buildCssSelectorForOccurrence(occurrence)))
                 .collect(Collectors.toList());
