@@ -19,6 +19,6 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {ShopRulesDoNotExistException.class})
     protected ResponseEntity<Object> handleShopRulesDoNotExist(Exception e, WebRequest request) {
         log.info(e.getMessage());
-        return new ErrorResponse().withError(e).send(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ErrorResponse().withError(e).send(HttpStatus.NOT_FOUND);
     }
 }
