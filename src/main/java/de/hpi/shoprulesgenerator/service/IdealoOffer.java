@@ -24,23 +24,6 @@ public class IdealoOffer {
         setOfferAttributes(new EnumMap<>(OfferAttribute.class));
     }
 
-    private List<String> toList(Object object) {
-        return Collections.singletonList(String.valueOf(object));
-    }
-
-    private List<String> toList(Map map) {
-        Collection values = map.values();
-        List<String> stringValues = new LinkedList<>();
-        for (Object value : values) {
-            stringValues.add(String.valueOf(value));
-        }
-        return stringValues;
-    }
-
-    private List<String> toList(String[] array) {
-        return Arrays.asList(array);
-    }
-
     public void setEans(String[] eans) {
         getOfferAttributes().put(OfferAttribute.EAN, toList(eans));
     }
@@ -79,5 +62,24 @@ public class IdealoOffer {
 
     List<String> getOfferAttribute(OfferAttribute attribute) {
         return getOfferAttributes().get(attribute);
+    }
+
+
+    //convert
+    private List<String> toList(Object object) {
+        return Collections.singletonList(String.valueOf(object));
+    }
+
+    private List<String> toList(Map map) {
+        Collection values = map.values();
+        List<String> stringValues = new LinkedList<>();
+        for (Object value : values) {
+            stringValues.add(String.valueOf(value));
+        }
+        return stringValues;
+    }
+
+    private List<String> toList(String[] array) {
+        return Arrays.asList(array);
     }
 }
