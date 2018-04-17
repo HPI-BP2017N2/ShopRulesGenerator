@@ -22,7 +22,7 @@ public class TextNodeSelectorGeneratorTest {
 
     @Before
     public void setup() throws IOException {
-        setExampleHTML(Jsoup.parse(getClass().getClassLoader().getResourceAsStream("TextNodeSelectorGenerator1.html"),
+        setExampleHTML(Jsoup.parse(getClass().getClassLoader().getResourceAsStream("TextNodeSelectorGenerator.html"),
                 "UTF-8", "https://www.saturn.de"));
     }
 
