@@ -28,7 +28,7 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
      * @param occurrence - The target DOM-Element
      * @return A minimal selector with highest possible identity match to select the element out of html.
      */
-    private String buildCssSelectorForOccurrence(Element occurrence) {
+    String buildCssSelectorForOccurrence(Element occurrence) {
         return buildCssSelectorForOccurrence(occurrence, new StringBuilder());
     }
 
