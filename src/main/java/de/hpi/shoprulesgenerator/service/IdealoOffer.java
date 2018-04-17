@@ -8,6 +8,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.jsoup.nodes.Document;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Setter(AccessLevel.PRIVATE)
 @Getter
@@ -60,7 +61,7 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.URL, toList(urls));
     }
 
-    List<String> getOfferAttribute(OfferAttribute attribute) {
+    List<String> get(OfferAttribute attribute) {
         return getOfferAttributes().get(attribute);
     }
 
@@ -70,13 +71,8 @@ public class IdealoOffer {
         return Collections.singletonList(String.valueOf(object));
     }
 
-    private List<String> toList(Map map) {
-        Collection values = map.values();
-        List<String> stringValues = new LinkedList<>();
-        for (Object value : values) {
-            stringValues.add(String.valueOf(value));
-        }
-        return stringValues;
+    private List<String> toList(Map<String, ?> map) {
+        return map.values().stream().map(String::valueOf).collect(Collectors.toList());
     }
 
     private List<String> toList(String[] array) {
