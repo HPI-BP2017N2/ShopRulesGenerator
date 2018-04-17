@@ -19,6 +19,7 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
     public List<Selector> buildSelectors(Document html, String attribute) {
         return html.select(buildCSSQuery(attribute))
                 .stream()
+                .filter(occurrence -> occurrence.text().equalsIgnoreCase(attribute))
                 .map(occurrence -> new TextNodeSelector(buildCssSelectorForOccurrence(occurrence)))
                 .collect(Collectors.toList());
     }
@@ -32,7 +33,7 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
     }
 
     private String buildCssSelectorForOccurrence(Element element, StringBuilder selectorBuilder) {
-        if (selectorBuilder.length() > 0) selectorBuilder.insert(0, " ");
+        if (selectorBuilder.length() > 0) selectorBuilder.insert(0, " > ");
         if (isElementIDSet(element)) return selectorBuilder.insert(0,"#" + element.id()).toString();
         selectorBuilder.insert(0, element.tagName() + ":nth-of-type(" + getTagIndexForChild(element) + ")");
         if (hasNoParentNode(element)) return selectorBuilder.toString();
@@ -45,9 +46,7 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
      */
     private int getTagIndexForChild(Element child){
         if (hasNoParentNode(child)) return -1;
-        int index = child.parent().getElementsByTag(child.tagName()).indexOf(child);
-        if (!child.parent().tagName().equals(child.tagName())) index++;
-        return index;
+        return child.parent().select("> " + child.tagName()).indexOf(child) + 1;
     }
 
     private String buildCSSQuery(String attribute) {
