@@ -1,13 +1,13 @@
 server:
-  port: ${SHOP_RULES_GENERATOR_PORT}
+  port: ${SHOPRULESGENERATOR_PORT}
 
 spring:
   data:
       mongodb:
         host: ${MONGO_IP}
         port: ${MONGO_PORT}
-        username: ${MONGO_SHOP_RULES_GENERATOR_USER}
-        password: ${MONGO_PASSWORD}
+        username: ${MONGO_BRIDGE_USER}
+        password: ${MONGO_BRIDGE_PW}
         database: data
 
 idealobridge:
@@ -21,7 +21,7 @@ idealobridge:
 shoprulesgenerator-settings:
   fetchDelay: 12000
   userAgent: "Mozilla/5.0 (compatible; HPI-BPN2-2017/2.1; https://hpi.de/naumann/teaching/bachelorprojekte/inventory-management.html)"
-  urlCleanerRoot: "http://localhost:2118"
+  urlCleanerRoot: ${URLCLEANER_IP}
   cleanUrlRoute: "/clean/"
 
 logging:
