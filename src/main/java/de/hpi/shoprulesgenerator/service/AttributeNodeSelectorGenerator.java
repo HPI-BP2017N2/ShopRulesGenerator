@@ -40,6 +40,7 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     private String getAttributeKeyForOfferAttribute(Element element, String offerAttribute) {
         for (Attribute nodeAttribute : element.attributes()) {
+            if (nodeAttribute.getValue() == null) continue;
             if (nodeAttribute.getValue().equalsIgnoreCase(offerAttribute)) return nodeAttribute.getKey();
         }
         return null;

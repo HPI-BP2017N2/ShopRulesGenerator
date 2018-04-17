@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
+import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -41,8 +42,9 @@ public class HTMLPageFetcher {
     }
 
     private void fetchHtmlPage(IdealoOffer offer, long shopID) {
-        String cleanUrl = cleanUrl(offer.getOfferAttribute(OfferAttribute.URL), shopID);
+        String cleanUrl = cleanUrl(offer.get(OfferAttribute.URL), shopID);
         try {
+            log.info("Fetching " + cleanUrl + "...");
             Document fetchedPage = Jsoup.connect(cleanUrl).userAgent(getConfig().getUserAgent()).get();
             offer.setFetchedPage(fetchedPage);
         } catch (IOException e) {
@@ -51,6 +53,10 @@ public class HTMLPageFetcher {
     }
 
     private String cleanUrl(List<String> urls, long shopID) {
-        return urls.isEmpty() ? null : getUrlCleaner().cleanURL(urls.get(0), shopID);
+        try {
+            return urls.isEmpty() ? null : getUrlCleaner().cleanURL(urls.get(0), shopID);
+        } catch (HTTPException e) {
+            return urls.get(0);
+        }
     }
 }

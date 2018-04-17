@@ -35,7 +35,8 @@ public class ShopRulesGeneratorControllerTest {
 
     @Test
     public void getRulesHappyPath() throws Exception {
-        doReturn(new ShopRules(getEXAMPLE_SHOP_ID())).when(getShopRulesGeneratorService()).getRules(getEXAMPLE_SHOP_ID());
+        doReturn(new ShopRules(null, getEXAMPLE_SHOP_ID())).when(getShopRulesGeneratorService()).getRules
+                (getEXAMPLE_SHOP_ID());
         getMockMvc()
                 .perform(get("/getRules/" + getEXAMPLE_SHOP_ID()))
                 .andExpect(status().isOk());

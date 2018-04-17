@@ -35,7 +35,8 @@ public class ShopRulesGeneratorServiceTest {
 
     @Test
     public void getExistingRules() throws ShopRulesDoNotExistException {
-        doReturn(new ShopRules(getEXAMPLE_SHOP_ID())).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
+        doReturn(new ShopRules(null, getEXAMPLE_SHOP_ID())).when(getShopRulesRepository()).findByShopID
+                (getEXAMPLE_SHOP_ID());
         getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID());
     }
 }

@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
+import de.hpi.shoprulesgenerator.dto.Property;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,40 +26,40 @@ public class IdealoOffer {
         setOfferAttributes(new EnumMap<>(OfferAttribute.class));
     }
 
-    public void setEans(String[] eans) {
-        getOfferAttributes().put(OfferAttribute.EAN, toList(eans));
+    public void setEan(Property<String> ean) {
+        getOfferAttributes().put(OfferAttribute.EAN, toList(ean.getValue()));
     }
 
-    public void setSku(String sku) {
-        getOfferAttributes().put(OfferAttribute.SKU, toList(sku));
+    public void setSku(Property<String> sku) {
+        getOfferAttributes().put(OfferAttribute.SKU, toList(sku.getValue()));
     }
 
-    public void setHans(String[] hans) {
-        getOfferAttributes().put(OfferAttribute.HAN, toList(hans));
+    public void setHan(Property<String> han) {
+        getOfferAttributes().put(OfferAttribute.HAN, toList(han.getValue()));
     }
 
-    public void setTitles(Map<String, String> titles) {
-        getOfferAttributes().put(OfferAttribute.TITLE, toList(titles));
+    public void setTitles(Property<Map<String, String>> titles) {
+        getOfferAttributes().put(OfferAttribute.TITLE, toList(titles.getValue()));
     }
 
-    public void setCategoryPaths(String[] categoryPaths) {
-        getOfferAttributes().put(OfferAttribute.CATEGORY, toList(categoryPaths));
+    public void setCategoryPaths(Property<String[]> categoryPaths) {
+        getOfferAttributes().put(OfferAttribute.CATEGORY, toList(categoryPaths.getValue()));
     }
 
-    public void setBrandName(String brandName) {
-        getOfferAttributes().put(OfferAttribute.BRAND, toList(brandName));
+    public void setBrandName(Property<String> brandName) {
+        getOfferAttributes().put(OfferAttribute.BRAND, toList(brandName.getValue()));
     }
 
-    public void setPrice(Map<String, Integer> price) {
-        getOfferAttributes().put(OfferAttribute.PRICE, toList(price));
+    public void setPrice(Property<Map<String, Integer>> price) {
+        getOfferAttributes().put(OfferAttribute.PRICE, toList(price.getValue()));
     }
 
-    public void setDescription(Map<String, String> description) {
-        getOfferAttributes().put(OfferAttribute.DESCRIPTION, toList(description));
+    public void setDescription(Property<Map<String, String>> description) {
+        getOfferAttributes().put(OfferAttribute.DESCRIPTION, toList(description.getValue()));
     }
 
-    public void setUrls(Map<String, String> urls) {
-        getOfferAttributes().put(OfferAttribute.URL, toList(urls));
+    public void setUrls(Property<Map<String, String>> urls) {
+        getOfferAttributes().put(OfferAttribute.URL, toList(urls.getValue()));
     }
 
     List<String> get(OfferAttribute attribute) {

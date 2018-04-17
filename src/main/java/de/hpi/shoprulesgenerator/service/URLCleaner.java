@@ -1,6 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
-import de.hpi.shoprulesgenerator.dto.CleanResponse;
+import de.hpi.shoprulesgenerator.dto.SuccessCleanResponse;
 import de.hpi.shoprulesgenerator.properties.ShopRulesGeneratorConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,9 +25,10 @@ public class URLCleaner {
 
     @Retryable(
             value = { HttpClientErrorException.class },
-            backoff = @Backoff(delay = 3000))
+            backoff = @Backoff(delay = 3000, multiplier = 5))
     String cleanURL(String dirtyUrl, long shopID) {
-        return getRestTemplate().getForObject(getCleanURLURI(dirtyUrl, shopID), CleanResponse.class).getUrl();
+        return getRestTemplate().getForObject(getCleanURLURI(dirtyUrl, shopID), SuccessCleanResponse.class).getData()
+                .getUrl();
     }
 
     private URI getCleanURLURI(String dirtyURL, long shopID) {

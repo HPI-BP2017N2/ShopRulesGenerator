@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode
-abstract class Selector {
+public abstract class Selector {
 
     public enum NodeType {
         TEXT_NODE,
