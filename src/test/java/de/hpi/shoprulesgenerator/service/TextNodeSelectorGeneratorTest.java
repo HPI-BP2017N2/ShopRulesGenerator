@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -26,13 +27,24 @@ public class TextNodeSelectorGeneratorTest {
     }
 
     @Test
-    public void buildSelectors() {
+    public void buildSelectorsForAttributeWithSingleOccurrence() {
         List<Selector> selectors = new TextNodeSelectorGenerator().buildSelectors(getExampleHTML(), "771420-0010");
-        Selector selector = new TextNodeSelector("#features section:nth-of-type(4) dl:nth-of-type(1) dd:nth-of-type" +
-                "(3)");
+        Selector selector = new TextNodeSelector("#features > section:nth-of-type(4) > dl:nth-of-type(1) > " +
+                "dd:nth-of-type(3)");
         assertTrue(selectors.contains(selector));
     }
 
-    // TODO: test for attribute that comes more then 1 time on the page (like "2305851")
-    //for now<: contains -> goal: equals
+    @Test
+    public void buildSelectorsForAttributeWithMultipleOccurrence() {
+        List<Selector> selectors = new TextNodeSelectorGenerator().buildSelectors(getExampleHTML(), "2305851");
+        Selector selectorA = new TextNodeSelector("#product-details > div:nth-of-type(2) > div:nth-of-type(1) > dl:nth-of-type(1) > dd:nth-of-type(1) > span:nth-of-type(1)");
+        Selector selectorB = new TextNodeSelector("#features > section:nth-of-type(1) > dl:nth-of-type(1) > dd:nth-of-type(2)");
+        assertTrue(selectors.containsAll(Arrays.asList(selectorA, selectorB)));
+    }
+
+    @Test
+    public void buildSelectorsOnlyForExactMatch() {
+        List<Selector> selectors = new TextNodeSelectorGenerator().buildSelectors(getExampleHTML(), "123456");
+        assertTrue(selectors.isEmpty());
+    }
 }
