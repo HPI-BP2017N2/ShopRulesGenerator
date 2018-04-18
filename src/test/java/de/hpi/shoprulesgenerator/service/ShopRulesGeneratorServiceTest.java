@@ -33,12 +33,16 @@ public class ShopRulesGeneratorServiceTest {
     @Mock
     private IdealoBridge idealoBridge;
 
+    @Mock
+    private HTMLPageFetcher fetcher;
+
     @InjectMocks
     private ShopRulesGeneratorService shopRulesGeneratorService;
 
     @Test(expected = ShopRulesDoNotExistException.class)
     public void getUnExistingRules() throws ShopRulesDoNotExistException {
         doReturn(new IdealoOffers()).when(getIdealoBridge()).getSampleOffers(anyLong());
+        doNothing().when(getFetcher()).fetchHTMLPages(any(), anyLong());
         doAnswer(returnsFirstArg()).when(getShopRulesRepository()).save(any());
         getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID());
     }
