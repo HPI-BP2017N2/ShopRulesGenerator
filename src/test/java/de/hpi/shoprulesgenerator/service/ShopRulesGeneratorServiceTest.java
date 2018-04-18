@@ -13,6 +13,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -25,11 +29,16 @@ public class ShopRulesGeneratorServiceTest {
     @Mock
     private IShopRulesRepository shopRulesRepository;
 
+    @Mock
+    private IdealoBridge idealoBridge;
+
     @InjectMocks
     private ShopRulesGeneratorService shopRulesGeneratorService;
 
     @Test(expected = ShopRulesDoNotExistException.class)
     public void getUnExistingRules() throws ShopRulesDoNotExistException {
+        doReturn(new IdealoOffers()).when(getIdealoBridge()).getSampleOffers(any());
+        doAnswer(returnsFirstArg()).when(getShopRulesRepository().save(any()));
         getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID());
     }
 
