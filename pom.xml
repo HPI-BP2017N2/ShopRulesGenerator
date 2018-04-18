@@ -5,7 +5,7 @@
 
     <groupId>de.hpi</groupId>
     <artifactId>shoprulesgenerator</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>ShopRulesGenerator</name>
@@ -74,6 +74,26 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>travis</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.21.0</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/ShopRulesGeneratorApplicationTests.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -82,6 +102,5 @@
             </plugin>
         </plugins>
     </build>
-
 
 </project>
