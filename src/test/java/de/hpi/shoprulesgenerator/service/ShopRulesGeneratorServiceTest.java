@@ -12,13 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @Getter(AccessLevel.PRIVATE)
@@ -40,11 +38,11 @@ public class ShopRulesGeneratorServiceTest {
     private ShopRulesGeneratorService shopRulesGeneratorService;
 
     @Test(expected = ShopRulesDoNotExistException.class)
-    public void getUnExistingRules() throws ShopRulesDoNotExistException {
+    public void getUnExistingRules(){
         doReturn(new IdealoOffers()).when(getIdealoBridge()).getSampleOffers(anyLong());
         doNothing().when(getFetcher()).fetchHTMLPages(any(), anyLong());
         doAnswer(returnsFirstArg()).when(getShopRulesRepository()).save(any());
-        getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID());
+        await().until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
     }
 
     @Test
