@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
-public class TextNodeSelectorGenerator extends SelectorGenerator {
+public class TextNodeSelectorGenerator implements SelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*:containsOwn(#attr#)";
 
