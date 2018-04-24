@@ -70,13 +70,15 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private void normalizeScore(EnumMap<OfferAttribute, Set<Selector>> selectorMap, int offerCount) {
         if (offerCount == 0) return;
         selectorMap.forEach((key, value) -> value.forEach(
-                selector -> selector.setNormalizedScore((selector.getScore() + (offerCount - 1)) / offerCount)));
+                selector -> selector.setNormalizedScore(
+                        (selector.getScore() + offerCount - 1.0) / (2.0 * offerCount - 1.0)
+                )));
     }
 
     private void calculateScoreForSelectors(IdealoOffers idealoOffers, EnumMap<OfferAttribute, Set<Selector>> selectorMap) {
         idealoOffers.forEach(idealoOffer ->
-                selectorMap.forEach((key, value) -> value.forEach(
-                        selector -> updateScoreForSelector(idealoOffer, key, selector))));
+                selectorMap.forEach((offerAttribute, selectors) -> selectors.forEach(
+                        selector -> updateScoreForSelector(idealoOffer, offerAttribute, selector))));
     }
 
     private void updateScoreForSelector(IdealoOffer idealoOffer, OfferAttribute attribute, Selector selector) {
@@ -93,11 +95,17 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     }
 
     private EnumMap<OfferAttribute, Set<Selector>> buildSelectorMap(IdealoOffers idealoOffers) {
-        EnumMap<OfferAttribute, Set<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
-
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = createEmptySelectorMap();
         idealoOffers.forEach(offer ->
                 Arrays.stream(OfferAttribute.values()).forEach(offerAttribute ->
-                        selectorMap.put(offerAttribute, buildSelectors(offer, offerAttribute))));
+                        selectorMap.get(offerAttribute).addAll(buildSelectors(offer, offerAttribute))));
+        return selectorMap;
+    }
+
+    private EnumMap<OfferAttribute, Set<Selector>> createEmptySelectorMap() {
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
+        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute ->
+                selectorMap.put(offerAttribute, new HashSet<>()));
         return selectorMap;
     }
 
@@ -107,7 +115,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
                 .map(value -> getGenerators().stream()
                         .map(generator -> generator.buildSelectors(offer.getFetchedPage(), value))
                         .flatMap(Collection::stream)
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toSet()))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
     }
