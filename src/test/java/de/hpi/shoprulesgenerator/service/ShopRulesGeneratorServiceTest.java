@@ -3,27 +3,25 @@ package de.hpi.shoprulesgenerator.service;
 import de.hpi.shoprulesgenerator.exception.ShopRulesDoNotExistException;
 import de.hpi.shoprulesgenerator.persistence.ShopRules;
 import de.hpi.shoprulesgenerator.persistence.repository.IShopRulesRepository;
+import de.hpi.shoprulesgenerator.properties.ShopRulesGeneratorConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.given;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -47,6 +45,9 @@ public class ShopRulesGeneratorServiceTest {
     @Mock
     private IShopRulesRepository shopRulesRepository;
 
+    @Spy
+    private ShopRulesGeneratorConfig config;
+
     @InjectMocks
     private ShopRulesGeneratorService shopRulesGeneratorService;
 
@@ -64,7 +65,8 @@ public class ShopRulesGeneratorServiceTest {
     private void loadHTMLFile(IdealoOffer offer) {
         try {
             offer.setFetchedPage(Jsoup.parse(
-                    getClass().getClassLoader().getResourceAsStream("saturn-sample/" + offer.get(OfferAttribute.URL)),
+                    getClass().getClassLoader().getResourceAsStream("saturn-sample/" + offer.get(OfferAttribute.URL)
+                            .get(0)),
                     "UTF-8",
                     "https://www.saturn.de"));
         } catch (IOException e) {
@@ -89,6 +91,16 @@ public class ShopRulesGeneratorServiceTest {
 
     @Test
     public void selectorsScoring() {
-
+        doReturn(getSaturnOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
+        doNothing().when(getFetcher()).fetchHTMLPages(getSaturnOffers(), getEXAMPLE_SHOP_ID());
+        doAnswer(invocationOnMock -> {
+            ShopRules rules = invocationOnMock.getArgument(0);
+            doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
+            System.out.println(rules);
+            return rules;
+        }).when(getShopRulesRepository()).save(any());
+        given().ignoreException(ShopRulesDoNotExistException.class)
+                .await().atMost(30, SECONDS)
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
     }
 }
