@@ -1,14 +1,12 @@
 package de.hpi.shoprulesgenerator.service;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@ToString
 public abstract class Selector {
 
     public enum NodeType {
