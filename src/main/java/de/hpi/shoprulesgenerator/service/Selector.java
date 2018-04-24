@@ -24,4 +24,11 @@ public abstract class Selector {
 
     private final String cssSelector;
 
+    void incrementScore() {
+        setScore(getScore() + 1);
+    }
+
+    void decrementScore() {
+        setScore(getScore() - 1);
+    }
 }
