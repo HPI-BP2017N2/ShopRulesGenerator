@@ -42,7 +42,7 @@ public class ShopRulesGeneratorServiceTest {
         doReturn(new IdealoOffers()).when(getIdealoBridge()).getSampleOffers(anyLong());
         doNothing().when(getFetcher()).fetchHTMLPages(any(), anyLong());
         doAnswer(returnsFirstArg()).when(getShopRulesRepository()).save(any());
-        await().until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+        await().until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) == null);
     }
 
     @Test

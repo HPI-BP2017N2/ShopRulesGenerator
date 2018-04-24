@@ -57,7 +57,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
 
         IdealoOffers idealoOffers = getIdealoBridge().getSampleOffers(shopID);
         getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
-        EnumMap<OfferAttribute, List<Selector>> selectorMap = buildSelectorMap(idealoOffers);
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = buildSelectorMap(idealoOffers);
         ShopRules rules = new ShopRules(selectorMap, shopID);
         getShopRulesRepository().save(rules);
         log.info("Created rules for shop " + shopID);
@@ -65,8 +65,8 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         getGenerateProcesses().remove(shopID);
     }
 
-    private EnumMap<OfferAttribute, List<Selector>> buildSelectorMap(IdealoOffers idealoOffers) {
-        EnumMap<OfferAttribute, List<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
+    private EnumMap<OfferAttribute, Set<Selector>> buildSelectorMap(IdealoOffers idealoOffers) {
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
 
         idealoOffers.forEach(offer ->
                 Arrays.stream(OfferAttribute.values()).forEach(offerAttribute ->
@@ -74,15 +74,15 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         return selectorMap;
     }
 
-    private List<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute) {
-        if (offer.get(offerAttribute) == null) return new LinkedList<>();
+    private Set<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute) {
+        if (offer.get(offerAttribute) == null) return new HashSet<>();
         return offer.get(offerAttribute).stream()
                 .map(value -> getGenerators().stream()
                         .map(generator -> generator.buildSelectors(offer.getFetchedPage(), value))
                         .flatMap(Collection::stream)
                         .collect(Collectors.toList()))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 }
