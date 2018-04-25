@@ -18,10 +18,13 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.given;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -96,11 +99,24 @@ public class ShopRulesGeneratorServiceTest {
         doAnswer(invocationOnMock -> {
             ShopRules rules = invocationOnMock.getArgument(0);
             doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
-            System.out.println(rules);
+            assertTrue(selectorsScoringCorrect(rules));
             return rules;
         }).when(getShopRulesRepository()).save(any());
         given().ignoreException(ShopRulesDoNotExistException.class)
                 .await().atMost(30, SECONDS)
                 .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+    }
+
+    private boolean selectorsScoringCorrect(ShopRules rules) {
+        EnumMap<OfferAttribute, Set<Selector>> selectors = rules.getSelectors();
+        return !selectors.get(OfferAttribute.EAN).isEmpty() &&
+                selectors.get(OfferAttribute.HAN).isEmpty() &&
+                !selectors.get(OfferAttribute.SKU).isEmpty() &&
+                !selectors.get(OfferAttribute.TITLE).isEmpty() &&
+                !selectors.get(OfferAttribute.CATEGORY).isEmpty() &&
+                !selectors.get(OfferAttribute.BRAND).isEmpty() &&
+                selectors.get(OfferAttribute.PRICE).isEmpty() &&
+                selectors.get(OfferAttribute.DESCRIPTION).isEmpty() &&
+                selectors.get(OfferAttribute.URL).isEmpty();
     }
 }
