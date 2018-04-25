@@ -11,6 +11,6 @@ import lombok.Setter;
 class TextNodeSelector extends Selector {
 
     TextNodeSelector(String cssSelector) {
-        super(cssSelector, NodeType.TEXT_NODE);
+        super(NodeType.TEXT_NODE, cssSelector);
     }
 }

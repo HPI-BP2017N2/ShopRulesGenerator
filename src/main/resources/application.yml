@@ -23,6 +23,7 @@ shoprulesgenerator-settings:
   userAgent: "Mozilla/5.0 (compatible; HPI-BPN2-2017/2.1; https://hpi.de/naumann/teaching/bachelorprojekte/inventory-management.html)"
   urlCleanerRoot: ${URLCLEANER_IP}
   cleanUrlRoute: "/clean/"
+  score-threshold: 0.5
 
 logging:
   level:

@@ -3,11 +3,12 @@ package de.hpi.shoprulesgenerator.service;
 import de.hpi.shoprulesgenerator.exception.ShopRulesDoNotExistException;
 import de.hpi.shoprulesgenerator.persistence.ShopRules;
 import de.hpi.shoprulesgenerator.persistence.repository.IShopRulesRepository;
+import de.hpi.shoprulesgenerator.properties.ShopRulesGeneratorConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,28 +18,21 @@ import java.util.stream.Collectors;
 @Service
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
 
-    private HTMLPageFetcher htmlPageFetcher;
+    private final HTMLPageFetcher htmlPageFetcher;
 
-    private IdealoBridge idealoBridge;
+    private final IdealoBridge idealoBridge;
 
-    private List<SelectorGenerator> generators;
+    private List<SelectorGenerator> generators =
+            Arrays.asList(new AttributeNodeSelectorGenerator(), new TextNodeSelectorGenerator());
 
-    private IShopRulesRepository shopRulesRepository;
+    private final IShopRulesRepository shopRulesRepository;
 
-    private Set<Long> generateProcesses;
+    private Set<Long> generateProcesses = new HashSet<>();
 
-
-    @Autowired
-    private ShopRulesGeneratorService(HTMLPageFetcher htmlPageFetcher, IdealoBridge idealoBridge,
-                                      IShopRulesRepository shopRulesRepository) {
-        setHtmlPageFetcher(htmlPageFetcher);
-        setIdealoBridge(idealoBridge);
-        setShopRulesRepository(shopRulesRepository);
-        setGenerators(Arrays.asList(new AttributeNodeSelectorGenerator(), new TextNodeSelectorGenerator()));
-        setGenerateProcesses(new HashSet<>());
-    }
+    private final ShopRulesGeneratorConfig config;
 
     @Override
     public ShopRules getRules(long shopID) throws ShopRulesDoNotExistException {
@@ -57,7 +51,10 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
 
         IdealoOffers idealoOffers = getIdealoBridge().getSampleOffers(shopID);
         getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
-        EnumMap<OfferAttribute, List<Selector>> selectorMap = buildSelectorMap(idealoOffers);
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = buildSelectorMap(idealoOffers);
+        calculateScoreForSelectors(idealoOffers, selectorMap);
+        normalizeScore(selectorMap, idealoOffers.size());
+        filterSelectors(selectorMap);
         ShopRules rules = new ShopRules(selectorMap, shopID);
         getShopRulesRepository().save(rules);
         log.info("Created rules for shop " + shopID);
@@ -65,24 +62,62 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         getGenerateProcesses().remove(shopID);
     }
 
-    private EnumMap<OfferAttribute, List<Selector>> buildSelectorMap(IdealoOffers idealoOffers) {
-        EnumMap<OfferAttribute, List<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
+    private void filterSelectors(EnumMap<OfferAttribute, Set<Selector>> selectorMap) {
+        selectorMap.values().forEach(selectors ->
+                selectors.removeIf(selector -> selector.getNormalizedScore() < getConfig().getScoreThreshold()));
+    }
 
+    private void normalizeScore(EnumMap<OfferAttribute, Set<Selector>> selectorMap, int offerCount) {
+        if (offerCount == 0) return;
+        selectorMap.forEach((key, value) -> value.forEach(
+                selector -> selector.setNormalizedScore(
+                        (selector.getScore() + offerCount - 1.0) / (2.0 * offerCount - 1.0)
+                )));
+    }
+
+    private void calculateScoreForSelectors(IdealoOffers idealoOffers, EnumMap<OfferAttribute, Set<Selector>> selectorMap) {
+        idealoOffers.forEach(idealoOffer ->
+                selectorMap.forEach((offerAttribute, selectors) -> selectors.forEach(
+                        selector -> updateScoreForSelector(idealoOffer, offerAttribute, selector))));
+    }
+
+    private void updateScoreForSelector(IdealoOffer idealoOffer, OfferAttribute attribute, Selector selector) {
+        String extractedData = DataExtractor.extract(idealoOffer.getFetchedPage(), selector);
+        if (doesMatch(extractedData, idealoOffer.get(attribute))){
+            selector.incrementScore();
+        } else if (!extractedData.isEmpty()) {
+            selector.decrementScore();
+        }
+    }
+
+    private boolean doesMatch(String extractedData, List<String> offerAttributes) {
+        return offerAttributes.stream().anyMatch(extractedData::equalsIgnoreCase);
+    }
+
+    private EnumMap<OfferAttribute, Set<Selector>> buildSelectorMap(IdealoOffers idealoOffers) {
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = createEmptySelectorMap();
         idealoOffers.forEach(offer ->
                 Arrays.stream(OfferAttribute.values()).forEach(offerAttribute ->
-                        selectorMap.put(offerAttribute, buildSelectors(offer, offerAttribute))));
+                        selectorMap.get(offerAttribute).addAll(buildSelectors(offer, offerAttribute))));
         return selectorMap;
     }
 
-    private List<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute) {
-        if (offer.get(offerAttribute) == null) return new LinkedList<>();
+    private EnumMap<OfferAttribute, Set<Selector>> createEmptySelectorMap() {
+        EnumMap<OfferAttribute, Set<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
+        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute ->
+                selectorMap.put(offerAttribute, new HashSet<>()));
+        return selectorMap;
+    }
+
+    private Set<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute) {
+        if (offer.get(offerAttribute) == null) return new HashSet<>();
         return offer.get(offerAttribute).stream()
                 .map(value -> getGenerators().stream()
                         .map(generator -> generator.buildSelectors(offer.getFetchedPage(), value))
                         .flatMap(Collection::stream)
-                        .collect(Collectors.toList()))
+                        .collect(Collectors.toSet()))
                 .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
 }

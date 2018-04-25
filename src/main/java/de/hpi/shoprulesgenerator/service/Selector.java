@@ -1,12 +1,12 @@
 package de.hpi.shoprulesgenerator.service;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Getter
+@Setter
 @RequiredArgsConstructor
 @EqualsAndHashCode
+@ToString
 public abstract class Selector {
 
     public enum NodeType {
@@ -14,6 +14,19 @@ public abstract class Selector {
         ATTRIBUTE_NODE
     }
 
-    private final String cssSelector;
+    private double normalizedScore;
+
+    private int score;
+
     private final NodeType nodeType;
+
+    private final String cssSelector;
+
+    void incrementScore() {
+        setScore(getScore() + 1);
+    }
+
+    void decrementScore() {
+        setScore(getScore() - 1);
+    }
 }

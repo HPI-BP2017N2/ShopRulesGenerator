@@ -4,11 +4,13 @@ import org.jsoup.nodes.Document;
 
 import java.util.List;
 
-public abstract class SelectorGenerator {
+public interface SelectorGenerator {
 
-    public abstract List<Selector> buildSelectors(Document html, String attribute);
+    List<Selector> buildSelectors(Document html, String attribute);
 
-    String escapeQuotes(String attribute) {
-        return attribute.replace("\"", "\\\"");
+    default String escapeQuotes(String attribute) {
+        return attribute
+                .replace("\"", "\\\"")
+                .replace("\'", "\\\'");
     }
 }

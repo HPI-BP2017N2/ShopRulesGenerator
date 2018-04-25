@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
-public class TextNodeSelectorGenerator extends SelectorGenerator {
+public class TextNodeSelectorGenerator implements SelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*:containsOwn(#attr#)";
 
@@ -35,8 +35,8 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
     private String buildCssSelectorForOccurrence(Element element, StringBuilder selectorBuilder) {
         if (selectorBuilder.length() > 0) selectorBuilder.insert(0, " > ");
         if (isElementIDSet(element)) return selectorBuilder.insert(0,"#" + element.id()).toString();
+        if (hasNoParentNode(element)) return element.tagName() + selectorBuilder.toString();
         selectorBuilder.insert(0, element.tagName() + ":nth-of-type(" + getTagIndexForChild(element) + ")");
-        if (hasNoParentNode(element)) return selectorBuilder.toString();
         return buildCssSelectorForOccurrence(element.parent(), selectorBuilder);
     }
 
@@ -59,5 +59,6 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
         return !element.id().isEmpty();
     }
 
-    private boolean hasNoParentNode(Element element) { return element.parent() == null; }
+    private boolean hasNoParentNode(Element element) { return element.parent() == null || element.tagName()
+            .equalsIgnoreCase("html"); }
 }

@@ -16,6 +16,9 @@ import javax.validation.constraints.NotBlank;
 public class ShopRulesGeneratorConfig {
 
     @Min(0)
+    private double scoreThreshold;
+
+    @Min(0)
     private int fetchDelay;
 
     @NotBlank
@@ -26,4 +29,5 @@ public class ShopRulesGeneratorConfig {
 
     @NotBlank
     private String cleanUrlRoute;
+
 }
