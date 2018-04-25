@@ -40,7 +40,7 @@ public class ShopRulesGeneratorServiceTest {
     @Mock
     private IdealoBridge idealoBridge;
 
-    private IdealoOffers saturnOffers;
+    private IdealoOffers sampleOffers;
 
     @Mock
     private IShopRulesRepository shopRulesRepository;
@@ -53,22 +53,22 @@ public class ShopRulesGeneratorServiceTest {
 
     @Before
     public void setup() throws IOException {
-        loadSaturnOffers();
+        loadSampleOffers();
     }
 
-    private void loadSaturnOffers() throws IOException {
-        setSaturnOffers(new ObjectMapper().readValue(getClass().getClassLoader().getResource
-                ("saturn-sample/sampleOffers.json"), IdealoOffers.class));
-        getSaturnOffers().forEach(this::loadHTMLFile);
+    private void loadSampleOffers() throws IOException {
+        setSampleOffers(new ObjectMapper().readValue(getClass().getClassLoader().getResource
+                ("samples/sampleOffers.json"), IdealoOffers.class));
+        getSampleOffers().forEach(this::loadHTMLFile);
     }
 
     private void loadHTMLFile(IdealoOffer offer) {
         try {
             offer.setFetchedPage(Jsoup.parse(
-                    getClass().getClassLoader().getResourceAsStream("saturn-sample/" + offer.get(OfferAttribute.URL)
+                    getClass().getClassLoader().getResourceAsStream("samples/" + offer.get(OfferAttribute.URL)
                             .get(0)),
                     "UTF-8",
-                    "https://www.saturn.de"));
+                    "https://www.sample.de"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,8 +91,8 @@ public class ShopRulesGeneratorServiceTest {
 
     @Test
     public void selectorsScoring() {
-        doReturn(getSaturnOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
-        doNothing().when(getFetcher()).fetchHTMLPages(getSaturnOffers(), getEXAMPLE_SHOP_ID());
+        doReturn(getSampleOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
+        doNothing().when(getFetcher()).fetchHTMLPages(getSampleOffers(), getEXAMPLE_SHOP_ID());
         doAnswer(invocationOnMock -> {
             ShopRules rules = invocationOnMock.getArgument(0);
             doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
