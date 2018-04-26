@@ -18,6 +18,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -39,6 +40,8 @@ public class ShopRulesGeneratorControllerTest {
                 (getEXAMPLE_SHOP_ID());
         getMockMvc()
                 .perform(get("/getRules/" + getEXAMPLE_SHOP_ID()))
+                .andExpect(jsonPath("data.shopID").value(getEXAMPLE_SHOP_ID()))
+                .andExpect(jsonPath("data.selectors").isEmpty())
                 .andExpect(status().isOk());
     }
 
