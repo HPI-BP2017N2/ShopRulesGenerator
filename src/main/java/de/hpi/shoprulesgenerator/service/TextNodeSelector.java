@@ -10,6 +10,10 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 class TextNodeSelector extends Selector {
 
+    TextNodeSelector(String cssSelector) {
+        super(NodeType.TEXT_NODE, cssSelector);
+    }
+
     TextNodeSelector(String cssSelector, String attribute, String textContainingAttribute) {
         super(NodeType.TEXT_NODE, cssSelector, attribute, textContainingAttribute);
     }

@@ -21,7 +21,7 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
                 .stream()
                 .filter(occurrence -> doesTextContainOfferAttribute(occurrence.text(), attribute))
                 .map(occurrence ->
-                        new TextNodeSelector(buildCssSelectorForOccurrence(occurrence), occurrence.text(), attribute))
+                        new TextNodeSelector(buildCssSelectorForOccurrence(occurrence), attribute, occurrence.text()))
                 .collect(Collectors.toList());
     }
 
