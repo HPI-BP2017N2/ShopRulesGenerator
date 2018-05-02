@@ -4,7 +4,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
 public abstract class Selector {
@@ -18,9 +17,24 @@ public abstract class Selector {
 
     private int score;
 
+    private int leftCutIndex;
+
+    private int rightCutIndex;
+
     private final NodeType nodeType;
 
     private final String cssSelector;
+
+    public Selector(NodeType nodeType, String cssSelector, String attribute, String textContainingAttribute) {
+        this.nodeType = nodeType;
+        this.cssSelector = cssSelector;
+        calculateCutIndices(attribute, textContainingAttribute);
+    }
+
+    private void calculateCutIndices(String attribute, String textContainingAttribute) {
+        setLeftCutIndex(textContainingAttribute.indexOf(attribute));
+        setRightCutIndex(getLeftCutIndex() + attribute.length());
+    }
 
     void incrementScore() {
         setScore(getScore() + 1);

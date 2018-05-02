@@ -20,7 +20,8 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
         return html.select(buildCSSQuery(attribute))
                 .stream()
                 .filter(occurrence -> doesTextContainOfferAttribute(occurrence.text(), attribute))
-                .map(occurrence -> new TextNodeSelector(buildCssSelectorForOccurrence(occurrence)))
+                .map(occurrence ->
+                        new TextNodeSelector(buildCssSelectorForOccurrence(occurrence), occurrence.text(), attribute))
                 .collect(Collectors.toList());
     }
 
