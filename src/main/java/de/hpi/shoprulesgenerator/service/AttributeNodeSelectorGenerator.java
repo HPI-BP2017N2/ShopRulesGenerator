@@ -31,17 +31,14 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
     }
 
     private boolean hasAttributeContainingOfferAttribute(Element element, String offerAttribute) {
-        for (Attribute nodeAttribute : element.attributes()) {
-            if (nodeAttribute.getValue() == null) continue;
-            if (nodeAttribute.getValue().equalsIgnoreCase(offerAttribute)) return true;
-        }
-        return false;
+        return getAttributeKeyForOfferAttribute(element, offerAttribute) != null;
     }
 
     private String getAttributeKeyForOfferAttribute(Element element, String offerAttribute) {
+        offerAttribute = offerAttribute.toLowerCase();
         for (Attribute nodeAttribute : element.attributes()) {
             if (nodeAttribute.getValue() == null) continue;
-            if (nodeAttribute.getValue().equalsIgnoreCase(offerAttribute)) return nodeAttribute.getKey();
+            if (nodeAttribute.getValue().toLowerCase().contains(offerAttribute)) return nodeAttribute.getKey();
         }
         return null;
     }

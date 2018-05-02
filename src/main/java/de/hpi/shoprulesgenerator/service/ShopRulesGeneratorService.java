@@ -71,8 +71,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         if (offerCount == 0) return;
         selectorMap.forEach((key, value) -> value.forEach(
                 selector -> selector.setNormalizedScore(
-                        (selector.getScore() + offerCount - 1.0) / (2.0 * offerCount - 1.0)
-                )));
+                        (selector.getScore() + offerCount - 1.0) / (2.0 * offerCount - 1.0))));
     }
 
     private void calculateScoreForSelectors(IdealoOffers idealoOffers, EnumMap<OfferAttribute, Set<Selector>> selectorMap) {
@@ -110,12 +109,16 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     }
 
     private Set<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute) {
-        if (offer.get(offerAttribute) == null) return new HashSet<>();
+        if (offer.get(offerAttribute) == null) return Collections.emptySet();
         return offer.get(offerAttribute).stream()
-                .map(value -> getGenerators().stream()
-                        .map(generator -> generator.buildSelectors(offer.getFetchedPage(), value))
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toSet()))
+                .map(value -> buildSelectorForOfferAttributeValue(offer, value))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<Selector> buildSelectorForOfferAttributeValue(IdealoOffer offer, String offerAttributeValue) {
+       return getGenerators().stream()
+                .map(generator -> generator.buildSelectors(offer.getFetchedPage(), offerAttributeValue))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
     }
