@@ -66,6 +66,8 @@ public class IdealoOffer {
         return getOfferAttributes().get(attribute);
     }
 
+    boolean has(OfferAttribute attribute) { return getOfferAttributes().containsKey(attribute); }
+
 
     //convert
     private List<String> toList(Object object) {

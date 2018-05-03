@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -13,6 +14,11 @@ public class SelectorTest {
         Selector testSelector = new TextNodeSelector(null, attr,textContainingAttr);
         assertEquals(5, testSelector.getLeftCutIndex());
         assertEquals(0, testSelector.getRightCutIndex());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void attemptToCreateSelectorWithInvalidParameter() {
+        new TextNodeSelector(null, "1234", "textWithoutOneTwoThreeFour");
     }
 
 }

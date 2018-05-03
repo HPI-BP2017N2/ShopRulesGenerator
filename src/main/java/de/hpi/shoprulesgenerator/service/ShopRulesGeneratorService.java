@@ -81,6 +81,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     }
 
     private void updateScoreForSelector(IdealoOffer idealoOffer, OfferAttribute attribute, Selector selector) {
+        if (!idealoOffer.has(attribute)) return;
         String extractedData = DataExtractor.extract(idealoOffer.getFetchedPage(), selector);
         if (doesMatch(extractedData, idealoOffer.get(attribute))){
             selector.incrementScore();

@@ -28,6 +28,9 @@ public abstract class Selector {
 
     public Selector(NodeType nodeType, String cssSelector, String attribute, String textContainingAttribute) {
         this(nodeType, cssSelector);
+        if (!textContainingAttribute.contains(attribute)) {
+            throw new IllegalArgumentException("Attribute has to be contained within given text!");
+        }
         calculateCutIndices(attribute, textContainingAttribute);
     }
 
