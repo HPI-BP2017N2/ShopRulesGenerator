@@ -1,6 +1,5 @@
 package de.hpi.shoprulesgenerator.service;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
