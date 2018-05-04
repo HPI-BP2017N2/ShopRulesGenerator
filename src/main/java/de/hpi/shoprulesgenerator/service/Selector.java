@@ -1,14 +1,12 @@
 package de.hpi.shoprulesgenerator.service;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 @ToString
+@EqualsAndHashCode
 public abstract class Selector {
 
     public enum NodeType {
@@ -49,18 +47,4 @@ public abstract class Selector {
         setScore(getScore() - 1);
     }
 
-    @Override
-    @SuppressWarnings("squid:S1206")
-    public boolean equals(Object o) {
-        if (o == this) return true;
-        if (o == null) return false;
-        if (!(o instanceof Selector)) return false;
-        Selector other = (Selector) o;
-        return Double.compare(getNormalizedScore(), other.getNormalizedScore()) == 0 &&
-                getScore() == other.getScore() &&
-                getLeftCutIndex() == other.getLeftCutIndex() &&
-                getRightCutIndex() == other.getRightCutIndex() &&
-                getNodeType().equals(other.getNodeType()) &&
-                getCssSelector().equals(other.getCssSelector());
-    }
 }

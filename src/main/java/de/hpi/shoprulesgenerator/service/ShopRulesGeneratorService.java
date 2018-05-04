@@ -105,7 +105,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private EnumMap<OfferAttribute, Set<Selector>> createEmptySelectorMap() {
         EnumMap<OfferAttribute, Set<Selector>> selectorMap = new EnumMap<>(OfferAttribute.class);
         Arrays.stream(OfferAttribute.values()).forEach(offerAttribute ->
-                selectorMap.put(offerAttribute, new HashSet<>()));
+                selectorMap.put(offerAttribute, new LinkedHashSet<>()));
         return selectorMap;
     }
 

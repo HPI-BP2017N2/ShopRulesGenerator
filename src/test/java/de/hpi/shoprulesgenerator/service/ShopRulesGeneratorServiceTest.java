@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.TextNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +19,9 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.SECONDS;

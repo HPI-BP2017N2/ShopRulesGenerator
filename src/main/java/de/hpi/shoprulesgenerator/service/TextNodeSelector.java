@@ -1,9 +1,11 @@
 package de.hpi.shoprulesgenerator.service;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 class TextNodeSelector extends Selector {
 
     @PersistenceConstructor
