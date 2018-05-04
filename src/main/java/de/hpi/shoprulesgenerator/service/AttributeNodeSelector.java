@@ -1,18 +1,18 @@
 package de.hpi.shoprulesgenerator.service;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 class AttributeNodeSelector extends Selector {
 
     private String attributeName;
 
-    AttributeNodeSelector(String cssSelector, String attributeName) {
+    @PersistenceConstructor
+    AttributeNodeSelector(String cssSelector, String attributeName){
         super(NodeType.ATTRIBUTE_NODE, cssSelector);
         setAttributeName(attributeName);
     }

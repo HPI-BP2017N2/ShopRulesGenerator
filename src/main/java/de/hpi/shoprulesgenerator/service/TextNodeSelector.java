@@ -1,15 +1,14 @@
 package de.hpi.shoprulesgenerator.service;
 
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.ToString;
+import org.springframework.data.annotation.PersistenceConstructor;
 
-@Getter(AccessLevel.PRIVATE)
-@Setter(AccessLevel.PRIVATE)
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 class TextNodeSelector extends Selector {
 
+    @PersistenceConstructor
     TextNodeSelector(String cssSelector) {
         super(NodeType.TEXT_NODE, cssSelector);
     }
