@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.TextNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,10 +18,6 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -113,12 +108,12 @@ public class ShopRulesGeneratorServiceTest {
 
     private void selectorsScoringCorrect(ShopRules rules) {
         assertEquals(1,
-                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 4).count());
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 4).count());
         assertEquals(2,
-                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 1).count());
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 1).count());
         assertEquals(1,
-                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -1).count());
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -1).count());
         assertEquals(1,
-                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -3).count());
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -3).count());
     }
 }
