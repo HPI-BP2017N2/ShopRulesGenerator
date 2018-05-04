@@ -24,6 +24,7 @@ import java.util.Set;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.given;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,14 +62,14 @@ public class ShopRulesGeneratorServiceTest {
 
     private void loadSampleOffers() throws IOException {
         setSampleOffers(new ObjectMapper().readValue(getClass().getClassLoader().getResource
-                ("samples/sampleOffers.json"), IdealoOffers.class));
+                ("scoring-samples/scoringOffers.json"), IdealoOffers.class));
         getSampleOffers().forEach(this::loadHTMLFile);
     }
 
     private void loadHTMLFile(IdealoOffer offer) {
         try {
             offer.setFetchedPage(Jsoup.parse(
-                    getClass().getClassLoader().getResourceAsStream("samples/" + offer.get(OfferAttribute.URL)
+                    getClass().getClassLoader().getResourceAsStream("scoring-samples/" + offer.get(OfferAttribute.URL)
                             .get(0)),
                     "UTF-8",
                     "https://www.sample.de"));
@@ -99,7 +100,7 @@ public class ShopRulesGeneratorServiceTest {
         doAnswer(invocationOnMock -> {
             ShopRules rules = invocationOnMock.getArgument(0);
             doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
-            assertTrue(selectorsScoringCorrect(rules));
+            selectorsScoringCorrect(rules);
             return rules;
         }).when(getShopRulesRepository()).save(any());
         given().ignoreException(ShopRulesDoNotExistException.class)
@@ -107,16 +108,14 @@ public class ShopRulesGeneratorServiceTest {
                 .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
     }
 
-    private boolean selectorsScoringCorrect(ShopRules rules) {
-        EnumMap<OfferAttribute, Set<Selector>> selectors = rules.getSelectors();
-        return !selectors.get(OfferAttribute.EAN).isEmpty() &&
-                selectors.get(OfferAttribute.HAN).isEmpty() &&
-                !selectors.get(OfferAttribute.SKU).isEmpty() &&
-                !selectors.get(OfferAttribute.TITLE).isEmpty() &&
-                !selectors.get(OfferAttribute.CATEGORY).isEmpty() &&
-                !selectors.get(OfferAttribute.BRAND).isEmpty() &&
-                selectors.get(OfferAttribute.PRICE).isEmpty() &&
-                selectors.get(OfferAttribute.DESCRIPTION).isEmpty() &&
-                selectors.get(OfferAttribute.URL).isEmpty();
+    private void selectorsScoringCorrect(ShopRules rules) {
+        assertEquals(1,
+                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 4).count());
+        assertEquals(2,
+                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 1).count());
+        assertEquals(1,
+                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -1).count());
+        assertEquals(1,
+                rules.getSelectors().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -3).count());
     }
 }

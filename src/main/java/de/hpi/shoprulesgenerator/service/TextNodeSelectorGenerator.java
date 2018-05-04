@@ -19,8 +19,9 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
     public List<Selector> buildSelectors(Document html, String attribute) {
         return html.select(buildCSSQuery(attribute))
                 .stream()
-                .filter(occurrence -> occurrence.text().equalsIgnoreCase(attribute))
-                .map(occurrence -> new TextNodeSelector(buildCssSelectorForOccurrence(occurrence)))
+                .filter(occurrence -> doesTextContainOfferAttribute(occurrence.text(), attribute))
+                .map(occurrence ->
+                        new TextNodeSelector(buildCssSelectorForOccurrence(occurrence), attribute, occurrence.text()))
                 .collect(Collectors.toList());
     }
 
@@ -30,6 +31,10 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
      */
     String buildCssSelectorForOccurrence(Element occurrence) {
         return buildCssSelectorForOccurrence(occurrence, new StringBuilder());
+    }
+
+    private boolean doesTextContainOfferAttribute(String text, String attribute) {
+        return text.toLowerCase().contains(attribute.toLowerCase());
     }
 
     private String buildCssSelectorForOccurrence(Element element, StringBuilder selectorBuilder) {

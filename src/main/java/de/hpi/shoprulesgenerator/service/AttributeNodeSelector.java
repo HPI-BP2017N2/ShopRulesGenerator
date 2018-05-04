@@ -16,4 +16,9 @@ class AttributeNodeSelector extends Selector {
         super(NodeType.ATTRIBUTE_NODE, cssSelector);
         setAttributeName(attributeName);
     }
+
+    AttributeNodeSelector(String cssSelector, String attributeName, String attribute, String textContainingAttribute) {
+        super(NodeType.ATTRIBUTE_NODE, cssSelector, attribute, textContainingAttribute);
+        setAttributeName(attributeName);
+    }
 }

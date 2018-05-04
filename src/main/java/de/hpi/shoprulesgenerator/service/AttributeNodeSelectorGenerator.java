@@ -14,15 +14,20 @@ import java.util.stream.Collectors;
 @Setter(AccessLevel.PRIVATE)
 public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
+    @SuppressWarnings("ConstantConditions") //null check not necessary, since we filter ocurrences out, where attr
+    // does not occur
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
         return html.select("*")
                 .stream()
                 .filter(element -> hasAttributeContainingOfferAttribute(element, attribute))
                 .map(occurrence -> {
-                    String attributeKey = getAttributeKeyForOfferAttribute(occurrence, attribute);
-                    return new AttributeNodeSelector(buildCssSelectorForOccurrence(occurrence, attributeKey), attributeKey);
-                })
+                    Attribute attr = getAttributeForOfferAttribute(occurrence, attribute);
+                    return new AttributeNodeSelector(
+                            buildCssSelectorForOccurrence(occurrence, attr.getKey()),
+                            attr.getKey(),
+                            attribute,
+                            attr.getValue());})
                 .collect(Collectors.toList());
     }
 
@@ -31,17 +36,14 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
     }
 
     private boolean hasAttributeContainingOfferAttribute(Element element, String offerAttribute) {
-        for (Attribute nodeAttribute : element.attributes()) {
-            if (nodeAttribute.getValue() == null) continue;
-            if (nodeAttribute.getValue().equalsIgnoreCase(offerAttribute)) return true;
-        }
-        return false;
+        return getAttributeForOfferAttribute(element, offerAttribute) != null;
     }
 
-    private String getAttributeKeyForOfferAttribute(Element element, String offerAttribute) {
+    private Attribute getAttributeForOfferAttribute(Element element, String offerAttribute) {
+        offerAttribute = offerAttribute.toLowerCase();
         for (Attribute nodeAttribute : element.attributes()) {
             if (nodeAttribute.getValue() == null) continue;
-            if (nodeAttribute.getValue().equalsIgnoreCase(offerAttribute)) return nodeAttribute.getKey();
+            if (nodeAttribute.getValue().toLowerCase().contains(offerAttribute)) return nodeAttribute;
         }
         return null;
     }

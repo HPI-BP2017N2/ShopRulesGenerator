@@ -4,8 +4,8 @@ import lombok.*;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @EqualsAndHashCode
+@RequiredArgsConstructor
 @ToString
 public abstract class Selector {
 
@@ -18,9 +18,26 @@ public abstract class Selector {
 
     private int score;
 
+    private int leftCutIndex;
+
+    private int rightCutIndex;
+
     private final NodeType nodeType;
 
     private final String cssSelector;
+
+    public Selector(NodeType nodeType, String cssSelector, String attribute, String textContainingAttribute) {
+        this(nodeType, cssSelector);
+        if (!textContainingAttribute.contains(attribute)) {
+            throw new IllegalArgumentException("Attribute has to be contained within given text!");
+        }
+        calculateCutIndices(attribute, textContainingAttribute);
+    }
+
+    private void calculateCutIndices(String attribute, String textContainingAttribute) {
+        setLeftCutIndex(textContainingAttribute.indexOf(attribute));
+        setRightCutIndex(textContainingAttribute.length() - (getLeftCutIndex() + attribute.length()));
+    }
 
     void incrementScore() {
         setScore(getScore() + 1);

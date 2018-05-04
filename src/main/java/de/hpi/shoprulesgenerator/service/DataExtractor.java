@@ -13,12 +13,19 @@ class DataExtractor {
     private DataExtractor() {}
 
     static String extract(Document document, Selector selector) {
+        String extractedData = "";
         if (selector.getNodeType() == Selector.NodeType.TEXT_NODE) {
-            return extract(document, (TextNodeSelector) selector);
+            extractedData = extract(document, (TextNodeSelector) selector);
         } else if (selector.getNodeType() == Selector.NodeType.ATTRIBUTE_NODE) {
-            return extract(document, (AttributeNodeSelector) selector);
+            extractedData = extract(document, (AttributeNodeSelector) selector);
         }
-        return "";
+        extractedData = cutAdditionalText(selector, extractedData);
+        return extractedData;
+    }
+
+    private static String cutAdditionalText(Selector selector, String extractedData) {
+        if (selector.getLeftCutIndex() + selector.getRightCutIndex() >= extractedData.length()) return "";
+        return extractedData.substring(selector.getLeftCutIndex(), extractedData.length() - selector.getRightCutIndex());
     }
 
     private static String extract(Document document, AttributeNodeSelector selector) {

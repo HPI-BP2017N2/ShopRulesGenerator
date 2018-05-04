@@ -42,9 +42,4 @@ public class TextNodeSelectorGeneratorTest {
         assertTrue(selectors.containsAll(Arrays.asList(selectorA, selectorB)));
     }
 
-    @Test
-    public void buildSelectorsOnlyForExactMatch() {
-        List<Selector> selectors = new TextNodeSelectorGenerator().buildSelectors(getExampleHTML(), "123456");
-        assertTrue(selectors.isEmpty());
-    }
 }
