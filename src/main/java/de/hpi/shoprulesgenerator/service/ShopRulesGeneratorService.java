@@ -118,7 +118,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     }
 
     private Set<Selector> buildSelectorForOfferAttributeValue(IdealoOffer offer, String offerAttributeValue) {
-       return getGenerators().stream()
+        return getGenerators().stream()
                 .map(generator -> generator.buildSelectors(offer.getFetchedPage(), offerAttributeValue))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
