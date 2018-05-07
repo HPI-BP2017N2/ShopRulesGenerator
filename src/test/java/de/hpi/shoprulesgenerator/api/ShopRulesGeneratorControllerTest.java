@@ -41,7 +41,7 @@ public class ShopRulesGeneratorControllerTest {
         getMockMvc()
                 .perform(get("/getRules/" + getEXAMPLE_SHOP_ID()))
                 .andExpect(jsonPath("data.shopID").value(getEXAMPLE_SHOP_ID()))
-                .andExpect(jsonPath("data.selectors").isEmpty())
+                .andExpect(jsonPath("data.selectorMap").isEmpty())
                 .andExpect(status().isOk());
     }
 
