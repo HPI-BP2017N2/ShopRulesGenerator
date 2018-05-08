@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,23 +43,35 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
                                           List<Selector> selectors) {
         if (script.isJSONLeaf()) {
             try {
-                selectors.add(buildSelector(cssSelector, script, path, attribute));
-            } catch (CouldNotDetermineJsonPathException e) {
-                log.error("Failed to create DataNodeSelector! " + script + " " + path + " " + attribute);
+                selectors.add(buildSelector(cssSelector, script.toValidJson(), path, attribute));
+            } catch (IOException | CouldNotDetermineJsonPathException e) {
+                log.error("Failed to create DataNodeSelector! Script: " + script + " Path: " + path + " Attribute: " +
+                        attribute, e);
             }
         } else {
+            script = removeOuterBrackets(script);
             while (hasBlockContainingAttribute(script, attribute)) {
                 Script block = script.getFirstBlock();
-                path.getLast().increment();
                 buildDataNodeSelectorDFS(cssSelector, block, path.cloneAndAddPathID(), attribute, selectors);
+                path.getLast().increment();
                 script = removeBlockFromScript(script, block);
             }
         }
     }
 
+    private Script removeOuterBrackets(Script block) {
+        String content = block.getContent();
+        int firstBracketIndex = content.indexOf('{') + 1;
+        int lastBracketIndex = content.lastIndexOf('}');
+        return (firstBracketIndex > 0 && lastBracketIndex != -1) ? new Script(content.substring(firstBracketIndex,
+                lastBracketIndex)) : block;
+    }
+
     private Script removeBlockFromScript(Script script, Script block) {
-        return new Script(script.getContent().substring(
-                script.getContent().indexOf(block.getContent()) + block.getContent().length()));
+        int index = script.getContent().indexOf(block.getContent());
+        return new Script(
+                script.getContent().substring(0, index) +
+                script.getContent().substring(index + block.getContent().length()));
     }
 
     private boolean hasBlockContainingAttribute(Script script, String attribute) {

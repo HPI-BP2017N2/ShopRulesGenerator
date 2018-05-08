@@ -20,7 +20,7 @@ class JsonPathBuilder {
             return getJsonPath(jsonValue.asArray(), attribute);
         } else if (jsonValue.isObject()) {
             return "." + getJsonPath(jsonValue.asObject(), attribute);
-        } else if (jsonValue.asString().toLowerCase().contains(attribute)) {
+        } else if (jsonValue.isString() && jsonValue.asString().toLowerCase().contains(attribute)) {
             return "";
         }
         throw new CouldNotDetermineJsonPathException("Could not generate JsonPath!");

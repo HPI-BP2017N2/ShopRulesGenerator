@@ -1,33 +1,42 @@
 package de.hpi.shoprulesgenerator.service;
 
-import com.eclipsesource.json.ParseException;
-import com.jayway.jsonpath.JsonPath;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.io.IOException;
+import java.util.Map;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
-@RequiredArgsConstructor
+@ToString
 class Script {
 
-    private final String content;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    Script getBlock(int blockIndex) throws BlockNotFoundException {
+    private String content;
+
+    Script(String content) {
+        getObjectMapper().configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        setContent(content);
+    }
+
+    Script getBlock(int blockIndex) {
         int bracketCount = blockIndex;
         int startIndex = getContent().indexOf('{');
         if (startIndex == -1) throw new BlockNotFoundException("There is no with the given block index " + blockIndex);
         for (int iChar = startIndex; iChar < getContent().length(); iChar++) {
-            if (getContent().charAt(iChar) == '{') bracketCount++;
-            else if (getContent().charAt(iChar) == '}') bracketCount--;
-            if (bracketCount == 0) return new Script(getContent().substring(startIndex, iChar));
+            char c = getContent().charAt(iChar);
+            if (c == '{') bracketCount++;
+            else if (c == '}') bracketCount--;
+            if (bracketCount == 0) return new Script(getContent().substring(startIndex, iChar + 1));
         }
         throw new BlockNotFoundException("Malformed JSON! Could not find block");
     }
 
-    Script getFirstBlock() throws BlockNotFoundException {
+    Script getFirstBlock() {
         return getBlock(0);
     }
 
@@ -39,11 +48,16 @@ class Script {
     @SuppressWarnings("squid:S3516")
     boolean isJSONLeaf() {
         try {
-            JsonPath.parse(getContent());
+            getObjectMapper().readValue(getContent(), new TypeReference<Map<String, Object>>(){});
             return true;
-        } catch (ParseException e) {
+        } catch (IOException e) {
             return false;
         }
     }
 
+    Script toValidJson() throws IOException {
+        //use jackson to convert to valid json and then convert back to string/ script object
+        return new Script(getObjectMapper().writeValueAsString(getObjectMapper().readValue(getContent(), new
+                TypeReference<Map<String, Object>>(){})));
+    }
 }
