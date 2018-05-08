@@ -30,7 +30,10 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private final IdealoBridge idealoBridge;
 
     private List<SelectorGenerator> generators =
-            Arrays.asList(new AttributeNodeSelectorGenerator(), new TextNodeSelectorGenerator());
+            Arrays.asList(
+                    new AttributeNodeSelectorGenerator(),
+                    new TextNodeSelectorGenerator(),
+                    new DataNodeSelectorGenerator());
 
     private final IShopRulesRepository shopRulesRepository;
 
