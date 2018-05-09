@@ -1,6 +1,7 @@
 package de.hpi.shoprulesgenerator.service;
 
 import com.jayway.jsonpath.JsonPath;
+import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
 import de.hpi.shoprulesgenerator.exception.CouldNotDetermineJsonPathException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,13 +29,15 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
                 .filter(occurrence -> occurrence.html().toLowerCase().contains(attribute))
                 .map(occurrence -> {
                     List<Selector> selectors = new LinkedList<>();
-                    buildDataNodeSelectorDFS(
-                            buildCssSelectorForOccurrence(occurrence),
-                            new Script(occurrence.html()),
-                            new Path(),
-                            attribute,
-                            selectors);
-                        return selectors;})
+                    try {
+                        buildDataNodeSelectorDFS(
+                                buildCssSelectorForOccurrence(occurrence),
+                                new Script(occurrence.html()),
+                                new Path(),
+                                attribute,
+                                selectors);
+                    } catch (BlockNotFoundException e) { log.error("Could not generate selectors!", e); }
+                    return selectors;})
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
@@ -71,7 +74,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
         int index = script.getContent().indexOf(block.getContent());
         return new Script(
                 script.getContent().substring(0, index) +
-                script.getContent().substring(index + block.getContent().length()));
+                        script.getContent().substring(index + block.getContent().length()));
     }
 
     private boolean hasBlockContainingAttribute(Script script, String attribute) {

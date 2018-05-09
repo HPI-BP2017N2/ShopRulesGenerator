@@ -18,20 +18,59 @@ import static org.junit.Assert.*;
 @Setter(AccessLevel.PRIVATE)
 public class DataNodeSelectorGeneratorTest {
 
-    private Document exampleHTML;
+    @Test
+    public void buildDataNodeSelectorsForAttribute() throws IOException {
+        Document exampleHTML = Jsoup.parse(getClass().getClassLoader().getResourceAsStream("DataNodeSelectorGenerator.html"),
+                "UTF-8", "https://www.saturn.de");
+        List<Selector> selectors = new DataNodeSelectorGenerator().buildSelectors(exampleHTML, "45678");
+        Path expectedPath = new Path(Arrays.asList(new PathID(0), new PathID(0)));
+        assertTrue(selectors.stream().anyMatch(selector -> {
+            DataNodeSelector dataNodeSelector = (DataNodeSelector) selector;
+            if (dataNodeSelector.getPathToBlock().size() != expectedPath.size()) return false;
+            for (int iPathID = 0; iPathID < dataNodeSelector.getPathToBlock().size(); iPathID++) {
+                if (!expectedPath.get(iPathID).equals(dataNodeSelector.getPathToBlock().get(iPathID))) return false;
+            }
+            return true;
+        }));
 
-    @Before
-    public void setup() throws IOException {
-        setExampleHTML(Jsoup.parse(getClass().getClassLoader().getResourceAsStream("DataNodeSelectorGenerator.html"),
-                "UTF-8", "https://www.saturn.de"));
+        assertEquals(1, selectors.size());
+
+        String expectedJsonPath = "$.products[1].ean";
+
+        assertTrue(selectors.stream().anyMatch(selector -> expectedJsonPath.equals(((DataNodeSelector) selector)
+                .getJsonPath())));
     }
 
     @Test
-    public void buildDataNodeSelectorsForAttribute() {
-        List<Selector> selectors = new DataNodeSelectorGenerator().buildSelectors(getExampleHTML(), "45678");
-        System.out.println(selectors);
-        // Selector selectorA = new AttributeNodeSelector("#product-details > div:nth-of-type(2) > div:nth-of-type(1)
-        // > dl:nth-of-type(1) > dd:nth-of-type(1) > span:nth-of-type(1)[content]", "content");
-      //  assertTrue(selectors.containsAll(Arrays.asList(selectorA, selectorB)));
+    public void buildNoDataSelectorsNoJson() throws IOException {
+        Document exampleHTML = Jsoup.parse(getClass().getClassLoader().getResourceAsStream
+                        ("DataNodeSelectorGenerator2.html"),"UTF-8", "https://www.saturn.de");
+        List<Selector> selectors = new DataNodeSelectorGenerator().buildSelectors(exampleHTML, "45678");
+        assertTrue(selectors.isEmpty());
+    }
+
+    @Test
+    public void buildNoDataSelectorsInvalidJson() throws IOException {
+        Document exampleHTML = Jsoup.parse(getClass().getClassLoader().getResourceAsStream
+                ("DataNodeSelectorGenerator3.html"),"UTF-8", "https://www.saturn.de");
+        List<Selector> selectors = new DataNodeSelectorGenerator().buildSelectors(exampleHTML, "45678");
+        assertTrue(selectors.isEmpty());
+    }
+
+    @Test
+    public void buildDataSelectorsMultipleOccurrenceInOneJson() throws IOException {
+        Document exampleHTML = Jsoup.parse(getClass().getClassLoader().getResourceAsStream
+                ("DataNodeSelectorGenerator4.html"),"UTF-8", "https://www.saturn.de");
+        List<Selector> selectors = new DataNodeSelectorGenerator().buildSelectors(exampleHTML, "45678");
+        assertEquals(1, selectors.size());
+    }
+
+    @Test
+    public void buildDataSelectorsForJS() throws IOException {
+        Document exampleHTML = Jsoup.parse(getClass().getClassLoader().getResourceAsStream
+                ("DataNodeSelectorGenerator5.html"),"UTF-8", "https://www.saturn.de");
+        List<Selector> selectors = new DataNodeSelectorGenerator().buildSelectors(exampleHTML, "45678");
+        assertEquals(0, selectors.size());
     }
 }
+
