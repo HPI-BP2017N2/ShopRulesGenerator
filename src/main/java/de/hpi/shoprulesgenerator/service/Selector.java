@@ -10,8 +10,9 @@ import lombok.*;
 public abstract class Selector {
 
     public enum NodeType {
+        ATTRIBUTE_NODE,
+        DATA_NODE,
         TEXT_NODE,
-        ATTRIBUTE_NODE
     }
 
     private double normalizedScore;
