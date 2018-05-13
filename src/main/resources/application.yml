@@ -8,7 +8,7 @@ spring:
         port: ${MONGO_PORT}
         username: ${MONGO_BRIDGE_USER}
         password: ${MONGO_BRIDGE_PW}
-        database: data
+        database: parsedOffers
 
 idealobridge:
   oAuth2ClientId: ${CLIENT_ID}
