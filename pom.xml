@@ -121,7 +121,7 @@
 			    <configuration>
 			     	<archive>
 			            <manifest>
-				    	<mainClass>de.hpi.urlcleaner.UrlCleanerApplication </mainClass>
+				    	<mainClass>de.hpi.shoprulesgenerator.ShopRulesGeneratorApplication</mainClass>
 			            </manifest>
 			    	</archive>
 			    </configuration>
