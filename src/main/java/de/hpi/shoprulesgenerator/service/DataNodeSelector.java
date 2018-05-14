@@ -1,6 +1,7 @@
 package de.hpi.shoprulesgenerator.service;
 
 import lombok.*;
+import org.springframework.data.annotation.PersistenceConstructor;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
@@ -12,9 +13,10 @@ class DataNodeSelector extends Selector {
 
     private String jsonPath;
 
-    DataNodeSelector(String cssSelector, Path path, String jsonPath) {
+    @PersistenceConstructor
+    DataNodeSelector(String cssSelector, Path pathToBlock, String jsonPath) {
         super(NodeType.DATA_NODE, cssSelector);
-        setPathToBlock(path);
+        setPathToBlock(pathToBlock);
         setJsonPath(jsonPath);
     }
 
