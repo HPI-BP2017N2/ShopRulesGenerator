@@ -2,6 +2,7 @@ package de.hpi.shoprulesgenerator.service;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
+import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,9 +51,11 @@ class DataExtractor {
         Elements elements = document.select(selector.getCssSelector());
         if (elements.isEmpty()) return "";
         Script block = new Script(elements.get(0).html());
-        for (PathID id : selector.getPathToBlock()) {
-            block = block.getBlock(id.getId());
-        }
+        try {
+            for (PathID id : selector.getPathToBlock()) {
+                block = block.getBlock(id.getId());
+            }
+        } catch (BlockNotFoundException ignored) { /* ignore this exception */}
         try {
             return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
         } catch (PathNotFoundException e) {
