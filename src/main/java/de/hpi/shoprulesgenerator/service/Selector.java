@@ -1,5 +1,7 @@
 package de.hpi.shoprulesgenerator.service;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 
 @Getter
@@ -7,6 +9,15 @@ import lombok.*;
 @RequiredArgsConstructor
 @ToString
 @EqualsAndHashCode
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = AttributeNodeSelector.class, name = "attributeNodeSelector"),
+        @JsonSubTypes.Type(value = DataNodeSelector.class, name = "dataNodeSelector"),
+        @JsonSubTypes.Type(value = TextNodeSelector.class, name = "textNodeSelector")
+})
 public abstract class Selector {
 
     public enum NodeType {
