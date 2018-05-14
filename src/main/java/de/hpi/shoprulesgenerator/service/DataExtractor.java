@@ -1,6 +1,7 @@
 package de.hpi.shoprulesgenerator.service;
 
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,6 +53,10 @@ class DataExtractor {
         for (PathID id : selector.getPathToBlock()) {
             block = block.getBlock(id.getId());
         }
-        return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
+        try {
+            return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
+        } catch (PathNotFoundException e) {
+            return "";
+        }
     }
 }
