@@ -13,9 +13,13 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
         return selectorMap;
     }
 
+    static SelectorMap buildEmptySelectorMap() {
+        return new SelectorMap();
+    }
+
     private SelectorMap() {
         super(OfferAttribute.class);
-        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute -> put(offerAttribute, new LinkedHashSet<>()));
+        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute -> put(offerAttribute, new HashSet<>()));
     }
 
     void normalizeScore(int offerCount) {
@@ -26,13 +30,8 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
     }
 
     void filter(double threshold) {
-        //WORKAROUND, see #25
-        SelectorMap filteredMap = new SelectorMap();
-        forEach((key, value) -> filteredMap.put(key, value.stream()
-                .filter(selector -> selector.getNormalizedScore() >= threshold)
-                .collect(Collectors.toSet())));
-        entrySet().clear();
-        entrySet().addAll(filteredMap.entrySet());
+        values().forEach(selectors ->
+                selectors.removeIf(selector -> selector.getNormalizedScore() < threshold));
     }
 
     private static Set<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute, List

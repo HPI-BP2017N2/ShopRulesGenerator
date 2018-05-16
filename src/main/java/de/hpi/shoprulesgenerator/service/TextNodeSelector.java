@@ -5,7 +5,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.PersistenceConstructor;
 
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true)
 class TextNodeSelector extends Selector {
 
     @PersistenceConstructor
@@ -16,4 +16,5 @@ class TextNodeSelector extends Selector {
     TextNodeSelector(String cssSelector, String attribute, String textContainingAttribute) {
         super(NodeType.TEXT_NODE, cssSelector, attribute, textContainingAttribute);
     }
+
 }
