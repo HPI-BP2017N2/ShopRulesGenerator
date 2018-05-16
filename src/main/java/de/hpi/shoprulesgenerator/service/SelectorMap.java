@@ -22,11 +22,12 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
         Arrays.stream(OfferAttribute.values()).forEach(offerAttribute -> put(offerAttribute, new HashSet<>()));
     }
 
-    void normalizeScore(int offerCount) {
-        if (offerCount == 0) return;
-        forEach((key, value) -> value.forEach(
-                selector -> selector.setNormalizedScore(
-                        (selector.getScore() + offerCount - 1.0) / (2.0 * offerCount - 1.0))));
+    void normalizeScore(EnumMap<OfferAttribute, Integer> countMap) {
+        forEach((offerAttribute, selectors) -> selectors.stream()
+                .filter(selector -> countMap.get(offerAttribute) > 0)
+                .forEach(selector -> selector.setNormalizedScore(
+                        (selector.getScore() + countMap.get(offerAttribute) - 1.0) /
+                                (2.0 * countMap.get(offerAttribute) - 1.0))));
     }
 
     void filter(double threshold) {
