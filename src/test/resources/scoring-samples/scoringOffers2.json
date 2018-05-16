@@ -1,0 +1,61 @@
+[
+  {
+    "ean": {
+      "value": "12345"
+    },
+    "urls": {
+      "value": {
+        "[Global{name=0}]": "ScoringSample1.html"
+      }
+    }
+  },
+  {
+    "ean": {
+      "value": "23456"
+    },
+    "urls": {
+      "value": {
+        "[Global{name=0}]": "ScoringSample2.html"
+      }
+    }
+  },{
+  "ean": {
+    "value": "34567"
+  },
+  "urls": {
+    "value": {
+      "[Global{name=0}]": "ScoringSample3.html"
+    }
+  }
+},{
+  "ean": {
+    "value": "45678"
+  },
+  "urls": {
+    "value": {
+      "[Global{name=0}]": "ScoringSample4.html"
+    }
+  }
+},{
+  "ean": {
+    "value": "56789"
+  },
+  "urls": {
+    "value": {
+      "[Global{name=0}]": "ScoringSample5.html"
+    }
+  }
+},{
+  "urls": {
+    "value": {
+      "[Global{name=0}]": "ScoringSample5.html"
+    }
+  }
+},{
+  "urls": {
+    "value": {
+      "[Global{name=0}]": "ScoringSample5.html"
+    }
+  }
+}
+]
