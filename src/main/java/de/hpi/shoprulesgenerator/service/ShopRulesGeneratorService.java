@@ -11,10 +11,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static de.hpi.shoprulesgenerator.service.SelectorMap.buildSelectorMap;
 
@@ -60,13 +57,23 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
         SelectorMap selectorMap = buildSelectorMap(idealoOffers, getGenerators());
         calculateScoreForSelectors(idealoOffers, selectorMap);
-        selectorMap.normalizeScore(idealoOffers.size());
+        selectorMap.normalizeScore(calculateCountMap(idealoOffers));
         selectorMap.filter(getConfig().getScoreThreshold());
         ShopRules rules = new ShopRules(selectorMap, shopID);
         getShopRulesRepository().save(rules);
         log.info("Created rules for shop " + shopID);
 
         getGenerateProcesses().remove(shopID);
+    }
+
+    private EnumMap<OfferAttribute,Integer> calculateCountMap(IdealoOffers idealoOffers) {
+        EnumMap<OfferAttribute, Integer> countMap = new EnumMap<>(OfferAttribute.class);
+        Arrays.stream(OfferAttribute.values())
+                .forEach(offerAttribute ->
+                        idealoOffers.forEach(idealoOffer ->
+                                countMap.put(offerAttribute, countMap.getOrDefault(offerAttribute, 0) +
+                                        (idealoOffer.has(offerAttribute) ? 1 : 0))));
+        return countMap;
     }
 
     private void calculateScoreForSelectors(IdealoOffers idealoOffers, SelectorMap selectorMap) {
