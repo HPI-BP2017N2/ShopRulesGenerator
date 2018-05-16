@@ -44,6 +44,11 @@
     "value": {
       "[Global{name=0}]": "ScoringSample5.html"
     }
+  },
+  "price": {
+    "value": {
+      "[Global{name=0}]": 1299
+    }
   }
 }
 ]

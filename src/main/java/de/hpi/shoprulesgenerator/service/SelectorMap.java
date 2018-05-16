@@ -1,9 +1,14 @@
 package de.hpi.shoprulesgenerator.service;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
+
+    @Getter(AccessLevel.PRIVATE) private static final String[] PRICE_SEPARATORS = new String[] {".", ","};
 
     static SelectorMap buildSelectorMap(IdealoOffers idealoOffers, List<SelectorGenerator> generators) {
         SelectorMap selectorMap = new SelectorMap();
@@ -39,7 +44,19 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
             <SelectorGenerator> generators) {
         if (offer.get(offerAttribute) == null) return Collections.emptySet();
         return offer.get(offerAttribute).stream()
-                .map(value -> buildSelectorForOfferAttributeValue(offer, value, generators))
+                .map(value -> {
+                    if (OfferAttribute.PRICE.equals(offerAttribute)) return buildPriceSpecificSelectors(offer, value, generators);
+                    return buildSelectorForOfferAttributeValue(offer, value, generators);
+                })
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
+    }
+
+    private static Set<Selector> buildPriceSpecificSelectors(IdealoOffer offer, String price, List<SelectorGenerator> generators) {
+
+        return Arrays.stream(getPRICE_SEPARATORS())
+                .map(separator -> buildSelectorForOfferAttributeValue(offer, new StringBuilder(price).insert(price
+                        .length() - 2, separator).toString(), generators))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
     }
