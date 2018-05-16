@@ -26,8 +26,13 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
     }
 
     void filter(double threshold) {
-        values().forEach(selectors ->
-                selectors.removeIf(selector -> selector.getNormalizedScore() < threshold));
+        //WORKAROUND, see #25
+        SelectorMap filteredMap = new SelectorMap();
+        forEach((key, value) -> filteredMap.put(key, value.stream()
+                .filter(selector -> selector.getNormalizedScore() >= threshold)
+                .collect(Collectors.toSet())));
+        entrySet().clear();
+        entrySet().addAll(filteredMap.entrySet());
     }
 
     private static Set<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute, List
