@@ -13,9 +13,13 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
         return selectorMap;
     }
 
+    static SelectorMap buildEmptySelectorMap() {
+        return new SelectorMap();
+    }
+
     private SelectorMap() {
         super(OfferAttribute.class);
-        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute -> put(offerAttribute, new LinkedHashSet<>()));
+        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute -> put(offerAttribute, new HashSet<>()));
     }
 
     void normalizeScore(int offerCount) {

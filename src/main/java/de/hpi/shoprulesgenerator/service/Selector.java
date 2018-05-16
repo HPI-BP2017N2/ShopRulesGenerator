@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @RequiredArgsConstructor
 @ToString
-@EqualsAndHashCode
+//@EqualsAndHashCode
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
@@ -59,4 +61,22 @@ public abstract class Selector {
         setScore(getScore() - 1);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Selector selector = (Selector) o;
+        return Double.compare(selector.normalizedScore, normalizedScore) == 0 &&
+                score == selector.score &&
+                leftCutIndex == selector.leftCutIndex &&
+                rightCutIndex == selector.rightCutIndex &&
+                nodeType == selector.nodeType &&
+                Objects.equals(cssSelector, selector.cssSelector);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(normalizedScore, score, leftCutIndex, rightCutIndex, nodeType, cssSelector);
+    }
 }
