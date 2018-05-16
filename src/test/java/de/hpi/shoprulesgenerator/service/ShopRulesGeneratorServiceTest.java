@@ -141,4 +141,23 @@ public class ShopRulesGeneratorServiceTest {
                         selector.getNormalizedScore() == 1).count());
     }
 
+    @Test
+    public void priceSpecificRules() {
+        doReturn(getSampleOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
+        doNothing().when(getFetcher()).fetchHTMLPages(getSampleOffers(), getEXAMPLE_SHOP_ID());
+        doAnswer(invocationOnMock -> {
+            ShopRules rules = invocationOnMock.getArgument(0);
+            doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
+            generateRulesForPrice(rules);
+            return rules;
+        }).when(getShopRulesRepository()).save(any());
+        given().ignoreException(ShopRulesDoNotExistException.class)
+                .await().atMost(30, SECONDS)
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+    }
+
+    private void generateRulesForPrice(ShopRules rules) {
+        assertEquals(1, rules.getSelectorMap().get(OfferAttribute.PRICE).size());
+    }
+
 }
