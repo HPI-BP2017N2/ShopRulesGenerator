@@ -63,10 +63,18 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         selectorMap.normalizeScore(calculateCountMap(idealoOffers));
         selectorMap.filter(getConfig().getScoreThreshold());
         ShopRules rules = new ShopRules(selectorMap, shopID);
+        logRuleStatus(rules);
         getShopRulesRepository().save(rules);
         log.info("Created rules for shop " + shopID);
 
         getGenerateProcesses().remove(shopID);
+    }
+
+    private void logRuleStatus(ShopRules rules) {
+        if (shouldDropRule(rules.getSelectorMap())) {
+            log.error("Failed to fetch any qualified rule for shop " + rules.getShopID() + ". Storing empty rules " +
+                    "anyway.");
+        }
     }
 
     private EnumMap<OfferAttribute,Integer> calculateCountMap(IdealoOffers idealoOffers) {
@@ -99,4 +107,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         return offerAttributes.stream().anyMatch(extractedData::equalsIgnoreCase);
     }
 
+    private boolean shouldDropRule(SelectorMap selectorMap) {
+        return selectorMap.values().stream().allMatch(Set::isEmpty);
+    }
 }

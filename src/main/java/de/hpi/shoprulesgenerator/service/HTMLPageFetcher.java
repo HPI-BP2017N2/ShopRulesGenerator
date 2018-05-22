@@ -29,9 +29,10 @@ public class HTMLPageFetcher {
 
     void fetchHTMLPages(IdealoOffers offers, long shopID) {
         int offerCounter = 0;
+        final int offerCount = offers.size();
         for (Iterator<IdealoOffer> iterator = offers.iterator(); iterator.hasNext();) {
             IdealoOffer offer = iterator.next();
-            fetchHtmlPage(offer, shopID, offerCounter++ / (double) offers.size());
+            fetchHtmlPage(offer, shopID, ++offerCounter / (double) offerCount);
             if (offer.getFetchedPage() == null) iterator.remove();
             if (iterator.hasNext()) sleep(getConfig().getFetchDelay());
         }
