@@ -44,7 +44,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     private void buildDataNodeSelectorDFS(String cssSelector, Script script, Path path, String attribute,
                                           List<Selector> selectors) {
-        if (script.isJSONLeaf()) {
+        if (script.isJSONLeaf() && script.containsAttribute(attribute)) {
             try {
                 selectors.add(buildSelector(cssSelector, script.toValidJson(), path, attribute));
             } catch (IOException | CouldNotDetermineJsonPathException e) {
