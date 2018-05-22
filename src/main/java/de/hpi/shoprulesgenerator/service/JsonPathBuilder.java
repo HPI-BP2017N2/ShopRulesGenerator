@@ -19,7 +19,7 @@ class JsonPathBuilder {
         if (jsonValue.isArray()) {
             return getJsonPath(jsonValue.asArray(), attribute);
         } else if (jsonValue.isObject()) {
-            return "." + getJsonPath(jsonValue.asObject(), attribute);
+            return getJsonPath(jsonValue.asObject(), attribute);
         } else if (jsonValue.isString() && jsonValue.asString().toLowerCase().contains(attribute)) {
             return "";
         }

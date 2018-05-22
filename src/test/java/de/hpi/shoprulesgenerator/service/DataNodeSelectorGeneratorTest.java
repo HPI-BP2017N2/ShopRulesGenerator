@@ -35,8 +35,7 @@ public class DataNodeSelectorGeneratorTest {
 
         assertEquals(1, selectors.size());
 
-        String expectedJsonPath = "$.products[1].ean";
-
+        String expectedJsonPath = "$['products'][1]['ean']";
         assertTrue(selectors.stream().anyMatch(selector -> expectedJsonPath.equals(((DataNodeSelector) selector)
                 .getJsonPath())));
     }
