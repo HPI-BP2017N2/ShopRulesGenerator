@@ -60,4 +60,8 @@ class Script {
         return new Script(getObjectMapper().writeValueAsString(getObjectMapper().readValue(getContent(), new
                 TypeReference<Map<String, Object>>(){})));
     }
+
+    boolean containsAttribute(String attribute) {
+        return getContent().toLowerCase().contains(attribute.toLowerCase());
+    }
 }
