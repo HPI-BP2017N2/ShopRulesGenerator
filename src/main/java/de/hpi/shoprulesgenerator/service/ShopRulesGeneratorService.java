@@ -40,7 +40,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private final ShopRulesGeneratorConfig config;
 
     @Override
-    @Cacheable(value = "rules", key = "shopID")
+    @Cacheable(value = "rules")
     public ShopRules getRules(long shopID) throws ShopRulesDoNotExistException {
         ShopRules rules = getShopRulesRepository().findByShopID(shopID);
         if (rules == null) {

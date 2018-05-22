@@ -40,7 +40,6 @@ class DataNodeSelector extends Selector {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(super.hashCode(), pathToBlock, jsonPath);
     }
 }
