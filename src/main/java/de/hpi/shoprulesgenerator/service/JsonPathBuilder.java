@@ -37,7 +37,7 @@ class JsonPathBuilder {
     private static String getJsonPath(JsonObject object, String attribute) throws CouldNotDetermineJsonPathException {
         for (String name : object.names()) {
             try {
-                return name + getJsonPath(object.get(name), attribute);
+                return "['" + name + "']" + getJsonPath(object.get(name), attribute);
             } catch (CouldNotDetermineJsonPathException ignored) { /* Ignore this, maybe attribute is in next name */ }
         }
         throw new CouldNotDetermineJsonPathException("Could not find attribute " + attribute + " within object!" + object);

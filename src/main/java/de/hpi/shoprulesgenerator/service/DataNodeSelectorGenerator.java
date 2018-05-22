@@ -53,12 +53,15 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
             }
         } else {
             script = removeOuterBrackets(script);
-            while (hasBlockContainingAttribute(script, attribute)) {
-                Script block = script.getFirstBlock();
-                buildDataNodeSelectorDFS(cssSelector, block, path.cloneAndAddPathID(), attribute, selectors);
-                path.getLast().increment();
-                script = removeBlockFromScript(script, block);
-            }
+            try {
+                while (hasBlockContainingAttribute(script, attribute)) {
+                    Script block = script.getFirstBlock();
+                    buildDataNodeSelectorDFS(cssSelector, block, path.cloneAndAddPathID(), attribute, selectors);
+                    path.getLast().increment();
+                    script = removeBlockFromScript(script, block);
+                }
+            } catch(BlockNotFoundException e) { log.error("Invalid JSON - skipping script tag."); }
+
         }
     }
 
