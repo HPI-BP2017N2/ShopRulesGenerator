@@ -37,12 +37,14 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
     }
 
     private AttributeNodeSelector generateNonNumericSelector(Document html, Attribute selectorAttribute, Element occurrence, String attribute) {
-        if (occurrence.attributes().size() <= 1) return null;
         StringBuilder cssSelector = new StringBuilder(occurrence.tagName());
         for (Attribute attr : occurrence.attributes()) {
             if (attr.getKey().equals(selectorAttribute.getKey())) continue;
-            cssSelector.append("[").append(attr.getKey()).append("=").append(attr.getValue()).append("]");
+            cssSelector.append("[").append(attr.getKey());
+            if (attr.getValue() != null && !attr.getValue().isEmpty()) cssSelector.append("=").append(attr.getValue());
+            cssSelector.append("]");
         }
+        cssSelector.append("[").append(selectorAttribute.getKey()).append("]");
         int index = getIndex(cssSelector.toString(), selectorAttribute, html);
         if (index == -1) return null;
         cssSelector.append(":nth-of-type(").append(index).append(")");

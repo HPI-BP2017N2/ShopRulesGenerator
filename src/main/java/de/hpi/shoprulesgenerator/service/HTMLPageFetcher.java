@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,14 +21,19 @@ import java.util.List;
 @Slf4j
 public class HTMLPageFetcher {
 
+    @Getter(AccessLevel.PRIVATE) private static final DecimalFormat FORMAT = new DecimalFormat("##.####");
+
     private final ShopRulesGeneratorConfig config;
 
     private final URLCleaner urlCleaner;
 
     void fetchHTMLPages(IdealoOffers offers, long shopID) {
+        int offerCounter = 0;
+        final int offerCount = offers.size();
         for (Iterator<IdealoOffer> iterator = offers.iterator(); iterator.hasNext();) {
             IdealoOffer offer = iterator.next();
-            fetchHtmlPage(offer, shopID);
+            fetchHtmlPage(offer, shopID, ++offerCounter / (double) offerCount);
+            if (offer.getFetchedPage() == null) iterator.remove();
             if (iterator.hasNext()) sleep(getConfig().getFetchDelay());
         }
     }
@@ -41,10 +47,11 @@ public class HTMLPageFetcher {
         }
     }
 
-    private void fetchHtmlPage(IdealoOffer offer, long shopID) {
+    private void fetchHtmlPage(IdealoOffer offer, long shopID, double progress) {
+        progress = progress * 100.0;
         String cleanUrl = cleanUrl(offer.get(OfferAttribute.URL), shopID);
         try {
-            log.info("Fetching " + cleanUrl + "...");
+            log.info("(" + getFORMAT().format(progress) + "%) Fetching " + cleanUrl + "...");
             Document fetchedPage = Jsoup.connect(cleanUrl).userAgent(getConfig().getUserAgent()).get();
             offer.setFetchedPage(fetchedPage);
         } catch (IOException e) {

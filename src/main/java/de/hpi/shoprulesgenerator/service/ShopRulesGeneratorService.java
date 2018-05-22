@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,11 +40,13 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private final ShopRulesGeneratorConfig config;
 
     @Override
+    @Cacheable(value = "rules")
     public ShopRules getRules(long shopID) throws ShopRulesDoNotExistException {
         ShopRules rules = getShopRulesRepository().findByShopID(shopID);
         if (rules == null) {
             new Thread(() -> generateShopRules(shopID)).start();
-            throw new ShopRulesDoNotExistException("There are no rules for the shop " + shopID);
+            throw new ShopRulesDoNotExistException("There are no rules for the shop " + shopID + ". Started " +
+                    "generating rules...");
         }
         return rules;
     }
@@ -60,10 +63,18 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         selectorMap.normalizeScore(calculateCountMap(idealoOffers));
         selectorMap.filter(getConfig().getScoreThreshold());
         ShopRules rules = new ShopRules(selectorMap, shopID);
+        logRuleStatus(rules);
         getShopRulesRepository().save(rules);
         log.info("Created rules for shop " + shopID);
 
         getGenerateProcesses().remove(shopID);
+    }
+
+    private void logRuleStatus(ShopRules rules) {
+        if (shouldDropRule(rules.getSelectorMap())) {
+            log.error("Failed to fetch any qualified rule for shop " + rules.getShopID() + ". Storing empty rules " +
+                    "anyway.");
+        }
     }
 
     private EnumMap<OfferAttribute,Integer> calculateCountMap(IdealoOffers idealoOffers) {
@@ -96,4 +107,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         return offerAttributes.stream().anyMatch(extractedData::equalsIgnoreCase);
     }
 
+    private boolean shouldDropRule(SelectorMap selectorMap) {
+        return selectorMap.values().stream().allMatch(Set::isEmpty);
+    }
 }
