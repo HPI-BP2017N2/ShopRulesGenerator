@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,6 +40,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
     private final ShopRulesGeneratorConfig config;
 
     @Override
+    @Cacheable(value = "rules", key = "shopID")
     public ShopRules getRules(long shopID) throws ShopRulesDoNotExistException {
         ShopRules rules = getShopRulesRepository().findByShopID(shopID);
         if (rules == null) {
