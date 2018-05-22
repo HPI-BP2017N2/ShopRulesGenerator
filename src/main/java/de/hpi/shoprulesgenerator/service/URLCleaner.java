@@ -5,6 +5,7 @@ import de.hpi.shoprulesgenerator.properties.ShopRulesGeneratorConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,8 @@ public class URLCleaner {
     @Retryable(
             value = { HttpClientErrorException.class },
             backoff = @Backoff(delay = 3000, multiplier = 5))
-    String cleanURL(String dirtyUrl, long shopID) {
+    @Cacheable("shopRootUrls")
+    public String cleanURL(String dirtyUrl, long shopID) {
         return getRestTemplate().getForObject(getCleanURLURI(dirtyUrl, shopID), SuccessCleanResponse.class).getData()
                 .getUrl();
     }
