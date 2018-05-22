@@ -41,7 +41,7 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
         for (Attribute attr : occurrence.attributes()) {
             if (attr.getKey().equals(selectorAttribute.getKey())) continue;
             cssSelector.append("[").append(attr.getKey());
-            if (!attr.getValue().isEmpty()) cssSelector.append("=").append(attr.getValue());
+            if (attr.getValue() != null && !attr.getValue().isEmpty()) cssSelector.append("=").append(attr.getValue());
             cssSelector.append("]");
         }
         cssSelector.append("[").append(selectorAttribute.getKey()).append("]");
