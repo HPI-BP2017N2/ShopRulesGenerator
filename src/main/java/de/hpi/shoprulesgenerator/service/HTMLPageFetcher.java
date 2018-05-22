@@ -28,6 +28,7 @@ public class HTMLPageFetcher {
         for (Iterator<IdealoOffer> iterator = offers.iterator(); iterator.hasNext();) {
             IdealoOffer offer = iterator.next();
             fetchHtmlPage(offer, shopID);
+            if (offer.getFetchedPage() == null) iterator.remove();
             if (iterator.hasNext()) sleep(getConfig().getFetchDelay());
         }
     }
