@@ -16,7 +16,7 @@ idealobridge:
   accessTokenURI: ${ACCESS_TOKEN_URI}
   apiUrl: ${API_URL}
   sampleOffersRoute: "/sampleOffers/"
-  maxOffers: 10
+  maxOffers: 50
 
 shoprulesgenerator-settings:
   fetchDelay: 12000
