@@ -52,6 +52,7 @@ public class ShopRulesGenerator {
         SelectorMap selectorMap = buildSelectorMap(idealoOffers, getGenerators());
         calculateScoreForSelectors(idealoOffers, selectorMap);
         selectorMap.normalizeScore(calculateCountMap(idealoOffers));
+        selectorMap.updateSelectorHashes();
         selectorMap.filter(getConfig().getScoreThreshold());
         ShopRules rules = new ShopRules(selectorMap, shopID);
         logRuleStatus(rules);
@@ -87,11 +88,18 @@ public class ShopRulesGenerator {
     private void updateScoreForSelector(IdealoOffer idealoOffer, OfferAttribute attribute, Selector selector) {
         if (!idealoOffer.has(attribute)) return;
         String extractedData = DataExtractor.extract(idealoOffer.getFetchedPage(), selector);
+        if (OfferAttribute.PRICE.equals(attribute)) extractedData = normalizePrice(extractedData);
         if (doesMatch(extractedData, idealoOffer.get(attribute))){
             selector.incrementScore();
         } else if (!extractedData.isEmpty()) {
             selector.decrementScore();
         }
+    }
+
+    private String normalizePrice(String price) {
+        return price
+                .replace(".", "")
+                .replace(",", "");
     }
 
     private boolean doesMatch(String extractedData, List<String> offerAttributes) {

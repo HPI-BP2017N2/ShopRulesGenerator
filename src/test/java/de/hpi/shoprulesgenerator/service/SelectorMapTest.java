@@ -22,8 +22,11 @@ public class SelectorMapTest {
         SelectorMap map = SelectorMap.buildEmptySelectorMap();
         TextNodeSelector selectorA = new TextNodeSelector("a");
         selectorA.setNormalizedScore(0.5);
-        TextNodeSelector selectorB = new TextNodeSelector("b");
-        selectorB.setNormalizedScore(0.4);
+        AttributeNodeSelector selectorB = new AttributeNodeSelector("#side-color-icon[style]", "style");
+        selectorB.setNormalizedScore(0.47368421052631576);
+        selectorB.setScore(0);
+        selectorB.setLeftCutIndex(106);
+        selectorB.setRightCutIndex(16);
         TextNodeSelector selectorC = new TextNodeSelector("c");
         selectorC.setNormalizedScore(0.6);
 
