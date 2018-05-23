@@ -28,8 +28,7 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
         ShopRules rules = getShopRulesRepository().findByShopID(shopID);
         if (rules == null) {
             new Thread(() -> getShopRulesGenerator().generateShopRules(shopID)).start();
-            throw new ShopRulesDoNotExistException("There are no rules for the shop " + shopID + ". Started " +
-                    "generating rules...");
+            throw new ShopRulesDoNotExistException("There are no rules for the shop " + shopID + ". Started generating rules...");
         }
         return rules;
     }

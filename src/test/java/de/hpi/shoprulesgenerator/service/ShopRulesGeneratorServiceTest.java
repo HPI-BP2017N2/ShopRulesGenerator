@@ -50,10 +50,13 @@ public class ShopRulesGeneratorServiceTest {
     private ShopRulesGeneratorConfig config;
 
     @InjectMocks
+    private ShopRulesGenerator shopRulesGenerator;
+
     private ShopRulesGeneratorService shopRulesGeneratorService;
 
     @Before
     public void setup() throws IOException {
+        setShopRulesGeneratorService(new ShopRulesGeneratorService(getShopRulesRepository(), getShopRulesGenerator()));
         loadSampleOffers();
     }
 
