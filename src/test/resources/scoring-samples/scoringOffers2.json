@@ -44,10 +44,17 @@
     "value": {
       "[Global{name=0}]": "ScoringSample5.html"
     }
-  },
-  "price": {
+  }
+},{
+  "urls": {
     "value": {
-      "[Global{name=0}]": 1299
+      "[Global{name=0}]": "ScoringSample5.html"
+    }
+  }
+},{
+  "urls": {
+    "value": {
+      "[Global{name=0}]": "ScoringSample5.html"
     }
   }
 }

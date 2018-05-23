@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
+import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
@@ -58,7 +59,7 @@ class DataExtractor {
         } catch (BlockNotFoundException ignored) { /* ignore this exception */}
         try {
             return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
-        } catch (PathNotFoundException e) {
+        } catch (InvalidJsonException | PathNotFoundException e) {
             return "";
         }
     }

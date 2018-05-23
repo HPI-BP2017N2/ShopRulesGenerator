@@ -32,7 +32,8 @@ public class AttributeNodeSelectorGeneratorTest {
         List<Selector> selectors = new AttributeNodeSelectorGenerator().buildSelectors(getExampleHTML(), "2305851");
         Selector selectorA = new AttributeNodeSelector("#product-details > div:nth-of-type(2) > div:nth-of-type(1) > dl:nth-of-type(1) > dd:nth-of-type(1) > span:nth-of-type(1)[content]", "content");
         Selector selectorB = new AttributeNodeSelector("#product-sidebar > div:nth-of-type(5) > form:nth-of-type(1) > div:nth-of-type(2) > a:nth-of-type(1)[data-gtm-event-ext]", "data-gtm-event-ext");
-        assertTrue(selectors.containsAll(Arrays.asList(selectorA, selectorB)));
+        Selector selectorC = new AttributeNodeSelector("span[itemprop=sku][content]:nth-of-type(0)", "content");
+        assertTrue(selectors.containsAll(Arrays.asList(selectorA, selectorB, selectorC)));
     }
 
 }

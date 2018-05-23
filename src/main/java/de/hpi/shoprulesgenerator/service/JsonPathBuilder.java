@@ -19,7 +19,7 @@ class JsonPathBuilder {
         if (jsonValue.isArray()) {
             return getJsonPath(jsonValue.asArray(), attribute);
         } else if (jsonValue.isObject()) {
-            return "." + getJsonPath(jsonValue.asObject(), attribute);
+            return getJsonPath(jsonValue.asObject(), attribute);
         } else if (jsonValue.isString() && jsonValue.asString().toLowerCase().contains(attribute)) {
             return "";
         }
@@ -37,7 +37,7 @@ class JsonPathBuilder {
     private static String getJsonPath(JsonObject object, String attribute) throws CouldNotDetermineJsonPathException {
         for (String name : object.names()) {
             try {
-                return name + getJsonPath(object.get(name), attribute);
+                return "['" + name + "']" + getJsonPath(object.get(name), attribute);
             } catch (CouldNotDetermineJsonPathException ignored) { /* Ignore this, maybe attribute is in next name */ }
         }
         throw new CouldNotDetermineJsonPathException("Could not find attribute " + attribute + " within object!" + object);

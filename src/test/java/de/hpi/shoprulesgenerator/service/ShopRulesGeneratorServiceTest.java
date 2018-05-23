@@ -23,7 +23,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.given;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -51,10 +50,13 @@ public class ShopRulesGeneratorServiceTest {
     private ShopRulesGeneratorConfig config;
 
     @InjectMocks
+    private ShopRulesGenerator shopRulesGenerator;
+
     private ShopRulesGeneratorService shopRulesGeneratorService;
 
     @Before
     public void setup() throws IOException {
+        setShopRulesGeneratorService(new ShopRulesGeneratorService(getShopRulesRepository(), getShopRulesGenerator()));
         loadSampleOffers();
     }
 
@@ -108,7 +110,11 @@ public class ShopRulesGeneratorServiceTest {
 
     private void selectorsScoringCorrect(ShopRules rules) {
         assertEquals(1,
-                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 4).count());
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 5)
+                        .count());
+        assertEquals(1,
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 4)
+                        .count());
         assertEquals(2,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 1).count());
         assertEquals(1,
@@ -116,4 +122,45 @@ public class ShopRulesGeneratorServiceTest {
         assertEquals(1,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -3).count());
     }
+
+    @Test
+    public void changedNormalizedScoreCalculation() {
+        doReturn(getSampleOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
+        doNothing().when(getFetcher()).fetchHTMLPages(getSampleOffers(), getEXAMPLE_SHOP_ID());
+        doAnswer(invocationOnMock -> {
+            ShopRules rules = invocationOnMock.getArgument(0);
+            doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
+            selectorsNormalizedScoringCorrect(rules);
+            return rules;
+        }).when(getShopRulesRepository()).save(any());
+        given().ignoreException(ShopRulesDoNotExistException.class)
+                .await().atMost(30, SECONDS)
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+    }
+
+    private void selectorsNormalizedScoringCorrect(ShopRules rules) {
+        assertEquals(1,
+                rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector ->
+                        selector.getNormalizedScore() == 1).count());
+    }
+
+    @Test
+    public void priceSpecificRules() {
+        doReturn(getSampleOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
+        doNothing().when(getFetcher()).fetchHTMLPages(getSampleOffers(), getEXAMPLE_SHOP_ID());
+        doAnswer(invocationOnMock -> {
+            ShopRules rules = invocationOnMock.getArgument(0);
+            doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());
+            generateRulesForPrice(rules);
+            return rules;
+        }).when(getShopRulesRepository()).save(any());
+        given().ignoreException(ShopRulesDoNotExistException.class)
+                .await().atMost(30, SECONDS)
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+    }
+
+    private void generateRulesForPrice(ShopRules rules) {
+        assertEquals(1, rules.getSelectorMap().get(OfferAttribute.PRICE).size());
+    }
+
 }
