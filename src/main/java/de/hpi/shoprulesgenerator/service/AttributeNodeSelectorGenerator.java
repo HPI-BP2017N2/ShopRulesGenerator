@@ -56,7 +56,7 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
     }
 
     private int getIndex(String tmpSelector, Attribute selectorAttribute, Document html) {
-        tmpSelector = escapeQuotes(tmpSelector);
+        tmpSelector = tmpSelector.replace("\"", "\\\"");
         Elements elements = html.select(tmpSelector);
         for (int iElement = 0; iElement < elements.size(); iElement++) {
             Element element = elements.get(iElement);

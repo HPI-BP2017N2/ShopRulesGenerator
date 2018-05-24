@@ -46,7 +46,7 @@ public class ShopRulesGeneratorServiceTest {
     @Mock
     private IShopRulesRepository shopRulesRepository;
 
-    @Spy
+    @Mock
     private ShopRulesGeneratorConfig config;
 
     @InjectMocks
@@ -148,6 +148,7 @@ public class ShopRulesGeneratorServiceTest {
     public void priceSpecificRules() {
         doReturn(getSampleOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
         doNothing().when(getFetcher()).fetchHTMLPages(getSampleOffers(), getEXAMPLE_SHOP_ID());
+        doReturn(0.0).when(getConfig()).getScoreThreshold();
         doAnswer(invocationOnMock -> {
             ShopRules rules = invocationOnMock.getArgument(0);
             doReturn(rules).when(getShopRulesRepository()).findByShopID(getEXAMPLE_SHOP_ID());

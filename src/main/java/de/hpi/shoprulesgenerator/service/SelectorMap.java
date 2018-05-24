@@ -33,11 +33,16 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
                 .forEach(selector -> selector.setNormalizedScore(
                         (selector.getScore() + countMap.get(offerAttribute) - 1.0) /
                                 (2.0 * countMap.get(offerAttribute) - 1.0))));
+        updateSelectorHashes();
     }
 
     void filter(double threshold) {
         values().forEach(selectors ->
                 selectors.removeIf(selector -> selector.getNormalizedScore() < threshold));
+    }
+
+    void updateSelectorHashes() { //needs to get called, after a selector got mutated
+        forEach((key, value) -> put(key, new HashSet<>(value)));
     }
 
     private static Set<Selector> buildSelectors(IdealoOffer offer, OfferAttribute offerAttribute, List
