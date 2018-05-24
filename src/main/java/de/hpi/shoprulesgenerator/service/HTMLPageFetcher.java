@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class HTMLPageFetcher {
     private String cleanUrl(List<String> urls, long shopID) {
         try {
             return urls.isEmpty() ? null : getUrlCleaner().cleanURL(urls.get(0), shopID);
-        } catch (HttpClientErrorException | HTTPException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException | HTTPException e) {
             return urls.get(0);
         }
     }
