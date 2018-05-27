@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -43,30 +44,54 @@ public class ShopRulesGenerator {
     private Set<Long> generateProcesses = new CopyOnWriteArraySet<>();
 
     @Async("srgThreadPoolTaskExecutor")
-    public void generateShopRules(long shopID) {
+    public void blockThenGenerateShopRules(long shopID) {
         if (getGenerateProcesses().contains(shopID)) return;
         getGenerateProcesses().add(shopID);
 
-        IdealoOffers idealoOffers = getIdealoBridge().getSampleOffers(shopID);
-        idealoOffers.removeRootUrlFromImages(getIdealoBridge().resolveShopIDToRootUrl(shopID));
-        getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
+        generateShopRules(shopID);
+
+        getGenerateProcesses().remove(shopID);
+    }
+
+    private void generateShopRules(long shopID) {
+        IdealoOffers idealoOffers = fetchOffersWithHtml(shopID);
+        if (idealoOffers == null) return;
+
+        ShopRules rules = new ShopRules(generateSelectorMap(idealoOffers), shopID);
+        logRuleStatus(rules);
+        getShopRulesRepository().save(rules);
+    }
+
+    private SelectorMap generateSelectorMap(IdealoOffers idealoOffers) {
         SelectorMap selectorMap = buildSelectorMap(idealoOffers, getGenerators());
         calculateScoreForSelectors(idealoOffers, selectorMap);
         selectorMap.normalizeScore(calculateCountMap(idealoOffers));
         selectorMap.updateSelectorHashes();
         selectorMap.filter(getConfig().getScoreThreshold());
-        ShopRules rules = new ShopRules(selectorMap, shopID);
-        logRuleStatus(rules);
-        getShopRulesRepository().save(rules);
-        log.info("Created rules for shop " + shopID);
+        return selectorMap;
+    }
 
-        getGenerateProcesses().remove(shopID);
+    private IdealoOffers fetchOffersWithHtml(long shopID) {
+        IdealoOffers idealoOffers;
+        try {
+            idealoOffers = getIdealoBridge().getSampleOffers(shopID);
+        } catch (HttpClientErrorException e) {
+            log.warn("Could not fetch sample offers.", e);
+            return null;
+        }
+        try {
+            idealoOffers.removeRootUrlFromImages(getIdealoBridge().resolveShopIDToRootUrl(shopID));
+        } catch (HttpClientErrorException e) { log.warn("Could not remove root url from images", e); }
+        getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
+        return idealoOffers;
     }
 
     private void logRuleStatus(ShopRules rules) {
         if (shouldDropRule(rules.getSelectorMap())) {
             log.warn("Failed to fetch any qualified rule for shop " + rules.getShopID() + ". Storing empty rules " +
                     "anyway.");
+        } else {
+            log.info("Created rules for shop " + rules.getShopID());
         }
     }
 
