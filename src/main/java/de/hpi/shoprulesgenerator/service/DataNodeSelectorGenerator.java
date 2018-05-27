@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -27,41 +28,49 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
         return html.select("script")
                 .stream()
                 .filter(occurrence -> occurrence.html().toLowerCase().contains(attribute))
-                .map(occurrence -> {
-                    List<Selector> selectors = new LinkedList<>();
-                    try {
-                        buildDataNodeSelectorDFS(
-                                buildCssSelectorForOccurrence(occurrence),
-                                new Script(occurrence.html()),
-                                new Path(),
-                                attribute,
-                                selectors);
-                    } catch (BlockNotFoundException e) { log.error("Could not generate selectors!", e); }
-                    return selectors;})
+                .map(occurrence -> buildDataNodeSelectorDFS(occurrence, attribute))
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    private void buildDataNodeSelectorDFS(String cssSelector, Script script, Path path, String attribute,
-                                          List<Selector> selectors) {
+    private List<Selector> buildDataNodeSelectorDFS(Element occurrence, String attribute) {
+        List<Selector> selectors = new LinkedList<>();
+        scriptBlockDFS(
+                buildCssSelectorForOccurrence(occurrence),
+                new Script(occurrence.html()),
+                new Path(),
+                attribute,
+                selectors);
+        return selectors;
+    }
+
+
+    private void scriptBlockDFS(String cssSelector, Script script, Path path, String attribute, List<Selector> selectors) {
         if (script.isJSONLeaf() && script.containsAttribute(attribute)) {
-            try {
-                selectors.add(buildSelector(cssSelector, script.toValidJson(), path, attribute));
-            } catch (IOException | CouldNotDetermineJsonPathException e) {
-                log.error("Failed to create DataNodeSelector! Script: " + script + " Path: " + path + " Attribute: " +
-                        attribute, e);
-            }
+            addDataNodeSelector(selectors, cssSelector, script, path, attribute);
         } else {
             script = removeOuterBrackets(script);
-            try {
-                while (hasBlockContainingAttribute(script, attribute)) {
-                    Script block = script.getFirstBlock();
-                    buildDataNodeSelectorDFS(cssSelector, block, path.cloneAndAddPathID(), attribute, selectors);
-                    path.getLast().increment();
-                    script = removeBlockFromScript(script, block);
-                }
-            } catch(BlockNotFoundException e) { log.error("Invalid JSON - skipping script tag."); }
+            goOneLevelDeeperInBlockTree(script, attribute, selectors, path, cssSelector);
+        }
+    }
 
+    private void goOneLevelDeeperInBlockTree(Script script, String attribute, List<Selector> selectors, Path path, String cssSelector) {
+        try {
+            while (hasBlockContainingAttribute(script, attribute)) {
+                Script block = script.getFirstBlock();
+                scriptBlockDFS(cssSelector, block, path.cloneAndAddPathID(), attribute, selectors);
+                path.getLast().increment();
+                script = removeBlockFromScript(script, block);
+            }
+        } catch (BlockNotFoundException e) { log.warn("Invalid Javascript - skipping script: " + script.getContent()); }
+    }
+
+    private void addDataNodeSelector(List<Selector> selectors, String cssSelector, Script script, Path path, String attribute) {
+        try {
+            selectors.add(buildSelector(cssSelector, script.toValidJson(), path, attribute));
+        } catch (IOException | CouldNotDetermineJsonPathException e) {
+            log.error("Failed to create DataNodeSelector! Script: " + script + " Path: " + path + " Attribute: " +
+                    attribute, e);
         }
     }
 
@@ -90,7 +99,5 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
         String textContainingAttribute = JsonPath.parse(snippet.getContent()).read(jsonPath);
         return new DataNodeSelector(cssSelector, attribute, textContainingAttribute, path, jsonPath);
     }
-
-
 
 }
