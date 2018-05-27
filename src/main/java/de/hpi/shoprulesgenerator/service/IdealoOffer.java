@@ -62,6 +62,10 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.URL, toList(urls.getValue()));
     }
 
+    public void setImageUrls(Property<Map<String, String[]>> imageUrls) {
+        getOfferAttributes().put(OfferAttribute.IMAGE_URLS, toList(imageUrls));
+    }
+
     List<String> get(OfferAttribute attribute) {
         return getOfferAttributes().get(attribute);
     }

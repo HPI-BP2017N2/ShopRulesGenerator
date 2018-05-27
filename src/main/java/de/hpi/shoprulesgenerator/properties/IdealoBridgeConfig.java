@@ -21,4 +21,5 @@ public class IdealoBridgeConfig {
     private String accessTokenURI;
     private String apiUrl;
     private String sampleOffersRoute;
+    private String shopIDToRootUrlRoute;
 }

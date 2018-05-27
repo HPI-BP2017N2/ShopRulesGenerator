@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
+import de.hpi.shoprulesgenerator.dto.ShopIDToRootUrlResponse;
 import de.hpi.shoprulesgenerator.properties.IdealoBridgeConfig;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,6 +28,21 @@ public class IdealoBridge {
             backoff = @Backoff(delay = 3000, multiplier = 5))
     IdealoOffers getSampleOffers(long shopID) {
         return getOAuthRestTemplate().getForObject(getSampleOffersURI(shopID), IdealoOffers.class);
+    }
+
+    @Retryable(
+            value = { HttpClientErrorException.class },
+            backoff = @Backoff(delay = 3000))
+    String resolveShopIDToRootUrl(long shopID) {
+        return getOAuthRestTemplate().getForObject(getShopIDToRootUrlURI(shopID), ShopIDToRootUrlResponse.class).getShopUrl();
+    }
+
+    private URI getShopIDToRootUrlURI(long shopID) {
+        return UriComponentsBuilder.fromUriString(getProperties().getApiUrl())
+                .path(getProperties().getShopIDToRootUrlRoute() + shopID)
+                .build()
+                .encode()
+                .toUri();
     }
 
     private URI getSampleOffersURI(long shopID) {

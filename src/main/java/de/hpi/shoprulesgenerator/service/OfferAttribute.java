@@ -9,5 +9,6 @@ public enum OfferAttribute {
     BRAND,
     PRICE,
     DESCRIPTION,
-    URL
+    URL,
+    IMAGE_URLS
 }

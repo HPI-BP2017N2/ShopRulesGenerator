@@ -48,6 +48,7 @@ public class ShopRulesGenerator {
         getGenerateProcesses().add(shopID);
 
         IdealoOffers idealoOffers = getIdealoBridge().getSampleOffers(shopID);
+        idealoOffers.removeRootUrlFromImages(getIdealoBridge().resolveShopIDToRootUrl(shopID));
         getHtmlPageFetcher().fetchHTMLPages(idealoOffers, shopID);
         SelectorMap selectorMap = buildSelectorMap(idealoOffers, getGenerators());
         calculateScoreForSelectors(idealoOffers, selectorMap);

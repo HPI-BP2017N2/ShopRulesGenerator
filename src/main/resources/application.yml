@@ -17,6 +17,7 @@ idealobridge:
   apiUrl: ${API_URL}
   sampleOffersRoute: "/sampleOffers/"
   maxOffers: 50
+  shopIDToRootUrlRoute: "/rootUrl/"
 
 shoprulesgenerator-settings:
   fetchDelay: 10000
