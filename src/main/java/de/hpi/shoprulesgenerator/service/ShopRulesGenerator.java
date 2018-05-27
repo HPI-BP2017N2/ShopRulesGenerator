@@ -135,4 +135,8 @@ public class ShopRulesGenerator {
     private boolean shouldDropRule(SelectorMap selectorMap) {
         return selectorMap.values().stream().allMatch(Set::isEmpty);
     }
+
+    boolean isCurrentlyGenerating(long shopID) {
+        return getGenerateProcesses().contains(shopID);
+    }
 }
