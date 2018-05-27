@@ -24,6 +24,8 @@ public class IdealoOffer {
 
     public IdealoOffer() {
         setOfferAttributes(new EnumMap<>(OfferAttribute.class));
+        Arrays.stream(OfferAttribute.values()).forEach(offerAttribute -> getOfferAttributes().put(offerAttribute, new
+                LinkedList<>()));
     }
 
     public void setEan(Property<String> ean) {
@@ -62,6 +64,10 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.URL, toList(urls.getValue()));
     }
 
+    public void setImageUrls(Property<Map<String, String[]>> imageUrls) {
+        getOfferAttributes().put(OfferAttribute.IMAGE_URLS, toList(imageUrls));
+    }
+
     List<String> get(OfferAttribute attribute) {
         return getOfferAttributes().get(attribute);
     }
@@ -71,7 +77,7 @@ public class IdealoOffer {
 
     //convert
     private List<String> toList(Object object) {
-        return Collections.singletonList(String.valueOf(object));
+        return new LinkedList<>(Collections.singletonList(String.valueOf(object)));
     }
 
     private List<String> toList(Map<String, ?> map) {

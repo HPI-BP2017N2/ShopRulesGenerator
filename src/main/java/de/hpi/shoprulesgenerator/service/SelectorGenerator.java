@@ -1,16 +1,29 @@
 package de.hpi.shoprulesgenerator.service;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.jsoup.nodes.Document;
 
 import java.util.List;
 
-public interface SelectorGenerator {
+abstract class SelectorGenerator {
 
-    List<Selector> buildSelectors(Document html, String attribute);
+    @Getter(AccessLevel.PRIVATE) private static final String[] REGEX_CHARACTERS = new String[] { "\\", ".", "[", "]", "{", "}", "(", ")",
+            "*",
+            "+", "-", "?", "^", "$", "|" };
 
-    default String escapeQuotes(String attribute) {
+    abstract List<Selector> buildSelectors(Document html, String attribute);
+
+    String escapeQuotes(String attribute) {
         return attribute
                 .replace("\"", "\\\"")
                 .replace("\'", "\\\'");
+    }
+
+    String escapeRegex(String attribute) {
+        for (String specialChar : getREGEX_CHARACTERS()) {
+            attribute = attribute.replace(specialChar, "\\" + specialChar);
+        }
+        return attribute;
     }
 }

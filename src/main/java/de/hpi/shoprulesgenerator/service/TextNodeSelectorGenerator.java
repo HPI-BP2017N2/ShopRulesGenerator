@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
-public class TextNodeSelectorGenerator implements SelectorGenerator {
+public class TextNodeSelectorGenerator extends SelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*:containsOwn(#attr#)";
 
@@ -23,6 +23,12 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
                 .map(occurrence ->
                         new TextNodeSelector(buildCssSelectorForOccurrence(occurrence), attribute, occurrence.text()))
                 .collect(Collectors.toList());
+    }
+
+    private String buildCSSQuery(String attribute) {
+        attribute = escapeRegex(attribute);
+        attribute = escapeQuotes(attribute);
+        return getCSS_QUERY_TEMPLATE().replace("#attr#", attribute);
     }
 
     /**
@@ -52,11 +58,6 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
     private int getTagIndexForChild(Element child){
         if (hasNoParentNode(child)) return -1;
         return child.parent().select("> " + child.tagName()).indexOf(child) + 1;
-    }
-
-    private String buildCSSQuery(String attribute) {
-        String attrWithEscapedQuotes = escapeQuotes(attribute);
-        return getCSS_QUERY_TEMPLATE().replace("#attr#", attrWithEscapedQuotes);
     }
 
     //conditionals
