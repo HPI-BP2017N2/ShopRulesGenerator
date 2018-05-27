@@ -42,7 +42,7 @@ public class ShopRulesGenerator {
 
     private Set<Long> generateProcesses = new CopyOnWriteArraySet<>();
 
-    @Async
+    @Async("srgThreadPoolTaskExecutor")
     public void generateShopRules(long shopID) {
         if (getGenerateProcesses().contains(shopID)) return;
         getGenerateProcesses().add(shopID);
