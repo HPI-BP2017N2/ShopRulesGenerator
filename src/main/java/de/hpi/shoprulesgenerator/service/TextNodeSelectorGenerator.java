@@ -11,18 +11,24 @@ import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
-public class TextNodeSelectorGenerator implements SelectorGenerator {
+public class TextNodeSelectorGenerator extends SelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*:containsOwn(#attr#)";
 
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
-        return html.select(buildCSSQuery(getCSS_QUERY_TEMPLATE(), attribute))
+        return html.select(buildCSSQuery(attribute))
                 .stream()
                 .filter(occurrence -> doesTextContainOfferAttribute(occurrence.text(), attribute))
                 .map(occurrence ->
                         new TextNodeSelector(buildCssSelectorForOccurrence(occurrence), attribute, occurrence.text()))
                 .collect(Collectors.toList());
+    }
+
+    private String buildCSSQuery(String attribute) {
+        attribute = escapeRegex(attribute);
+        attribute = escapeQuotes(attribute);
+        return getCSS_QUERY_TEMPLATE().replace("#attr#", attribute);
     }
 
     /**

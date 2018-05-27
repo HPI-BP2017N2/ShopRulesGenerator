@@ -16,13 +16,14 @@ import java.util.stream.Collectors;
 @Setter(AccessLevel.PRIVATE)
 public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
-    @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "[attr$='#attribute#']";
+    @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*";
 
     @SuppressWarnings("ConstantConditions") //null check not necessary, since we only select valid ones
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
-        return html.select(buildCSSQuery(getCSS_QUERY_TEMPLATE(), attribute))
+        return html.select(getCSS_QUERY_TEMPLATE())
                 .stream()
+                .filter(element -> hasAttributeContainingOfferAttribute(element, attribute))
                 .map(occurrence -> {
                     Attribute selectorAttribute = getAttributeForOfferAttribute(occurrence, attribute);
                     return Arrays.asList(
@@ -38,7 +39,7 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
             if (attr.getKey().equals(selectorAttribute.getKey())) continue;
             cssSelector.append("[").append(attr.getKey());
             if (attr.getValue() != null && !attr.getValue().replace(" ", "").isEmpty())
-                cssSelector.append("=").append(attr.getValue());
+                cssSelector.append("=").append("'").append(attr.getValue()).append("'");
             cssSelector.append("]");
         }
         cssSelector.append("[").append(selectorAttribute.getKey()).append("]");
@@ -59,6 +60,10 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     private String buildCssSelectorForOccurrence(Element occurrence, String attributeKey) {
         return buildCssSelectorForOccurrence(occurrence) + "[" + attributeKey + "]";
+    }
+
+    private boolean hasAttributeContainingOfferAttribute(Element element, String offerAttribute) {
+        return getAttributeForOfferAttribute(element, offerAttribute) != null;
     }
 
     private Attribute getAttributeForOfferAttribute(Element element, String offerAttribute) {

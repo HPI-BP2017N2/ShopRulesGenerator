@@ -109,23 +109,24 @@ public class ShopRulesGeneratorServiceTest {
     }
 
     private void selectorsScoringCorrect(ShopRules rules) {
-        assertEquals(1,
+        assertEquals(2,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 5)
                         .count());
         assertEquals(1,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 4)
                         .count());
-        assertEquals(2,
+        assertEquals(3,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == 1).count());
         assertEquals(1,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -1).count());
-        assertEquals(1,
+        assertEquals(2,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector -> selector.getScore() == -3).count());
     }
 
     @Test
     public void changedNormalizedScoreCalculation() {
         doReturn(getSampleOffers()).when(getIdealoBridge()).getSampleOffers(getEXAMPLE_SHOP_ID());
+        doReturn("").when(getIdealoBridge()).resolveShopIDToRootUrl(getEXAMPLE_SHOP_ID());
         doNothing().when(getFetcher()).fetchHTMLPages(getSampleOffers(), getEXAMPLE_SHOP_ID());
         doAnswer(invocationOnMock -> {
             ShopRules rules = invocationOnMock.getArgument(0);
@@ -139,7 +140,7 @@ public class ShopRulesGeneratorServiceTest {
     }
 
     private void selectorsNormalizedScoringCorrect(ShopRules rules) {
-        assertEquals(1,
+        assertEquals(2,
                 rules.getSelectorMap().get(OfferAttribute.EAN).stream().filter(selector ->
                         selector.getNormalizedScore() == 1).count());
     }
