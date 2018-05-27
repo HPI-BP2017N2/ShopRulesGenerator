@@ -48,7 +48,11 @@ public class ShopRulesGenerator {
         if (getGenerateProcesses().contains(shopID)) return;
         getGenerateProcesses().add(shopID);
 
-        generateShopRules(shopID);
+        try {
+            generateShopRules(shopID);
+        } catch (Exception e) {
+            log.error("FATAL ERROR: Could not generate rule!", e);
+        }
 
         getGenerateProcesses().remove(shopID);
     }
