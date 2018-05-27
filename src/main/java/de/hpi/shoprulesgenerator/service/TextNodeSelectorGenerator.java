@@ -17,7 +17,7 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
 
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
-        return html.select(buildCSSQuery(attribute))
+        return html.select(buildCSSQuery(getCSS_QUERY_TEMPLATE(), attribute))
                 .stream()
                 .filter(occurrence -> doesTextContainOfferAttribute(occurrence.text(), attribute))
                 .map(occurrence ->
@@ -52,11 +52,6 @@ public class TextNodeSelectorGenerator implements SelectorGenerator {
     private int getTagIndexForChild(Element child){
         if (hasNoParentNode(child)) return -1;
         return child.parent().select("> " + child.tagName()).indexOf(child) + 1;
-    }
-
-    private String buildCSSQuery(String attribute) {
-        String attrWithEscapedQuotes = escapeQuotes(attribute);
-        return getCSS_QUERY_TEMPLATE().replace("#attr#", attrWithEscapedQuotes);
     }
 
     //conditionals

@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 @Setter(AccessLevel.PRIVATE)
 public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
+    @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "[attr$='#attribute#']";
+
     @SuppressWarnings("ConstantConditions") //null check not necessary, since we only select valid ones
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
-        return html.select("[attr$='" + attribute + "]'")
+        return html.select(buildCSSQuery(getCSS_QUERY_TEMPLATE(), attribute))
                 .stream()
                 .map(occurrence -> {
                     Attribute selectorAttribute = getAttributeForOfferAttribute(occurrence, attribute);

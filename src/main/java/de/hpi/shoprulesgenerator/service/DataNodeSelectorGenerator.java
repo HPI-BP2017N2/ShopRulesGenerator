@@ -23,9 +23,11 @@ import static de.hpi.shoprulesgenerator.service.JsonPathBuilder.getJsonPath;
 @Slf4j
 public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
+    @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "script";
+
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
-        return html.select("script")
+        return html.select(getCSS_QUERY_TEMPLATE())
                 .stream()
                 .filter(occurrence -> occurrence.html().toLowerCase().contains(attribute))
                 .map(occurrence -> buildDataNodeSelectorDFS(occurrence, attribute))
