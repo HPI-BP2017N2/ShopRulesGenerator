@@ -6,10 +6,9 @@ import lombok.Setter;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,44 +25,28 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
                 .filter(element -> hasAttributeContainingOfferAttribute(element, attribute))
                 .map(occurrence -> {
                     Attribute selectorAttribute = getAttributeForOfferAttribute(occurrence, attribute);
-                    List<AttributeNodeSelector> selectors = new LinkedList<>();
-                    selectors.add(generateNumericSelector(selectorAttribute, occurrence, attribute));
-                    AttributeNodeSelector nonNumericSelector = generateNonNumericSelector(html, selectorAttribute,
-                            occurrence, attribute);
-                    if (nonNumericSelector != null) selectors.add(nonNumericSelector);
-                    return selectors;})
+                    return Arrays.asList(
+                            generateNumericSelector(selectorAttribute, occurrence, attribute),
+                            generateNonNumericSelector(selectorAttribute, occurrence, attribute));})
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 
-    private AttributeNodeSelector generateNonNumericSelector(Document html, Attribute selectorAttribute, Element occurrence, String attribute) {
+    private AttributeNodeSelector generateNonNumericSelector(Attribute selectorAttribute, Element occurrence, String attribute) {
         StringBuilder cssSelector = new StringBuilder(occurrence.tagName());
         for (Attribute attr : occurrence.attributes()) {
             if (attr.getKey().equals(selectorAttribute.getKey())) continue;
             cssSelector.append("[").append(attr.getKey());
-            if (attr.getValue() != null && !attr.getValue().isEmpty()) cssSelector.append("=").append(attr.getValue());
+            if (attr.getValue() != null && !attr.getValue().replace(" ", "").isEmpty())
+                cssSelector.append("=").append(attr.getValue());
             cssSelector.append("]");
         }
         cssSelector.append("[").append(selectorAttribute.getKey()).append("]");
-        int index = getIndex(cssSelector.toString(), selectorAttribute, html);
-        if (index == -1) return null;
-        cssSelector.append(":nth-of-type(").append(index).append(")");
         return new AttributeNodeSelector(
                 cssSelector.toString(),
                 selectorAttribute.getKey(),
                 attribute,
                 selectorAttribute.getValue());
-    }
-
-    private int getIndex(String tmpSelector, Attribute selectorAttribute, Document html) {
-        tmpSelector = tmpSelector.replace("\"", "\\\"");
-        Elements elements = html.select(tmpSelector);
-        for (int iElement = 0; iElement < elements.size(); iElement++) {
-            Element element = elements.get(iElement);
-            if (element.hasAttr(selectorAttribute.getKey()) && element.attr(selectorAttribute.getKey()).equals(selectorAttribute.getValue()))
-                return iElement;
-        }
-        return -1;
     }
 
     private AttributeNodeSelector generateNumericSelector(Attribute selectorAttribute, Element occurrence, String attribute) {
