@@ -3,12 +3,10 @@ package de.hpi.shoprulesgenerator.service;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceConstructor;
 
-import java.util.Objects;
-
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @ToString(callSuper = true)
-//@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 class AttributeNodeSelector extends Selector {
 
     private String attributeName;
@@ -24,17 +22,4 @@ class AttributeNodeSelector extends Selector {
         setAttributeName(attributeName);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        AttributeNodeSelector selector = (AttributeNodeSelector) o;
-        return Objects.equals(attributeName, selector.attributeName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), attributeName);
-    }
 }
