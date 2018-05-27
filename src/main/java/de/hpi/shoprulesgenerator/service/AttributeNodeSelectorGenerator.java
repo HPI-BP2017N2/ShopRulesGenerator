@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Setter(AccessLevel.PRIVATE)
 public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
-    @SuppressWarnings("ConstantConditions") //null check not necessary, since we filter ocurrences out, where attr
+    @SuppressWarnings("ConstantConditions") //null check not necessary, since we filter occurrences out, where attr
     // does not occur
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
