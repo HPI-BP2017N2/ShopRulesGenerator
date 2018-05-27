@@ -37,7 +37,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
         List<Selector> selectors = new LinkedList<>();
         scriptBlockDFS(
                 buildCssSelectorForOccurrence(occurrence),
-                new Script(occurrence.html()),
+                new Script(occurrence.data()),
                 new Path(),
                 attribute,
                 selectors);
