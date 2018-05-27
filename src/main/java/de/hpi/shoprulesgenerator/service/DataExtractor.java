@@ -7,11 +7,13 @@ import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
+@Slf4j
 class DataExtractor {
 
     private DataExtractor() {}
@@ -54,13 +56,28 @@ class DataExtractor {
         Script block = new Script(elements.get(0).html());
         try {
             for (PathID id : selector.getPathToBlock()) {
+                if (id != selector.getPathToBlock().getFirst()) block = removeOuterBrackets(block);
                 block = block.getBlock(id.getId());
             }
-        } catch (BlockNotFoundException ignored) { /* ignore this exception */}
-        try {
-            return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
-        } catch (InvalidJsonException | PathNotFoundException e) {
+            return extract(block, selector);
+        } catch (BlockNotFoundException ignored) {
             return "";
         }
+    }
+
+    private static String extract(Script block, DataNodeSelector selector) {
+        try {
+            return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
+        } catch (InvalidJsonException | PathNotFoundException ignored) {
+            return "";
+        }
+    }
+
+    private static Script removeOuterBrackets(Script block) {
+        String content = block.getContent();
+        int firstBracketIndex = content.indexOf('{') + 1;
+        int lastBracketIndex = content.lastIndexOf('}');
+        return (firstBracketIndex > 0 && lastBracketIndex != -1) ? new Script(content.substring(firstBracketIndex,
+                lastBracketIndex)) : block;
     }
 }
