@@ -16,13 +16,11 @@ import java.util.stream.Collectors;
 @Setter(AccessLevel.PRIVATE)
 public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
-    @SuppressWarnings("ConstantConditions") //null check not necessary, since we filter occurrences out, where attr
-    // does not occur
+    @SuppressWarnings("ConstantConditions") //null check not necessary, since we only select valid ones
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
-        return html.select("*")
+        return html.select("[attr$='" + attribute + "]'")
                 .stream()
-                .filter(element -> hasAttributeContainingOfferAttribute(element, attribute))
                 .map(occurrence -> {
                     Attribute selectorAttribute = getAttributeForOfferAttribute(occurrence, attribute);
                     return Arrays.asList(
@@ -59,10 +57,6 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     private String buildCssSelectorForOccurrence(Element occurrence, String attributeKey) {
         return buildCssSelectorForOccurrence(occurrence) + "[" + attributeKey + "]";
-    }
-
-    private boolean hasAttributeContainingOfferAttribute(Element element, String offerAttribute) {
-        return getAttributeForOfferAttribute(element, offerAttribute) != null;
     }
 
     private Attribute getAttributeForOfferAttribute(Element element, String offerAttribute) {
