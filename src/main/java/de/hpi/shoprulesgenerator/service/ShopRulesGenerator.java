@@ -64,7 +64,7 @@ public class ShopRulesGenerator {
 
     private void logRuleStatus(ShopRules rules) {
         if (shouldDropRule(rules.getSelectorMap())) {
-            log.error("Failed to fetch any qualified rule for shop " + rules.getShopID() + ". Storing empty rules " +
+            log.warn("Failed to fetch any qualified rule for shop " + rules.getShopID() + ". Storing empty rules " +
                     "anyway.");
         }
     }

@@ -57,7 +57,7 @@ public class HTMLPageFetcher {
             Document fetchedPage = Jsoup.connect(cleanUrl).userAgent(getConfig().getUserAgent()).get();
             offer.setFetchedPage(fetchedPage);
         } catch (IOException e) {
-            log.error("Could not fetch page for: " + cleanUrl, e);
+            log.warn("Could not fetch page for: " + cleanUrl, e);
         }
     }
 
@@ -65,6 +65,7 @@ public class HTMLPageFetcher {
         try {
             return urls.isEmpty() ? null : getUrlCleaner().cleanURL(urls.get(0), shopID);
         } catch (HttpClientErrorException | HttpServerErrorException | HTTPException e) {
+            log.warn("Could not clean url " + urls.get(0) + " of shop " + shopID, e);
             return urls.get(0);
         }
     }
