@@ -34,7 +34,8 @@ class Script {
     Script getBlock(int blockIndex) {
         int bracketCount = blockIndex;
         int startIndex = getContent().indexOf('{');
-        if (startIndex == -1) throw new BlockNotFoundException("There is no with the given block index " + blockIndex);
+        if (startIndex == -1) throw new BlockNotFoundException("There is no block with the given block index " +
+                blockIndex);
         for (int iChar = startIndex; iChar < getContent().length(); iChar++) {
             char c = getContent().charAt(iChar);
             if (c == '{') bracketCount++;
