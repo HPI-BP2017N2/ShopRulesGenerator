@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 @Getter
@@ -19,8 +23,12 @@ class Script {
     private String content;
 
     Script(String content) {
-        getObjectMapper().configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        allowAllObjectMapperFeatures();
         setContent(content);
+    }
+
+    private void allowAllObjectMapperFeatures() {
+        Arrays.stream(JsonParser.Feature.values()).forEach(feature -> getObjectMapper().configure(feature, true));
     }
 
     Script getBlock(int blockIndex) {
