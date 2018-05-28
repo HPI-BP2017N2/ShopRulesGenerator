@@ -59,11 +59,11 @@ class DataExtractor {
     private static String extract(Document document, DataNodeSelector selector) {
         Elements elements = document.select(selector.getCssSelector());
         if (elements.isEmpty()) return "";
-        Script block = new Script(elements.get(0).html());
+        Script block = new Script(elements.get(0).data());
         try {
             for (PathID id : selector.getPathToBlock()) {
-                if (id != selector.getPathToBlock().getFirst()) block = removeOuterBrackets(block);
                 block = block.getBlock(id.getId());
+                if (id != selector.getPathToBlock().getLast()) block = removeOuterBrackets(block);
             }
             return extract(block, selector);
         } catch (BlockNotFoundException ignored) {
@@ -73,9 +73,17 @@ class DataExtractor {
 
     private static String extract(Script block, DataNodeSelector selector) {
         try {
-            return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
+            return dataToString(JsonPath.parse(block.getContent()).read(selector.getJsonPath()));
         } catch (InvalidJsonException | PathNotFoundException ignored) {
             return "";
+        }
+    }
+
+    private static String dataToString(Object jsonData) {
+        try {
+            return (String) jsonData;
+        } catch (ClassCastException e) {
+            return String.valueOf(jsonData);
         }
     }
 

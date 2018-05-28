@@ -52,7 +52,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
         try {
             while (hasBlockContainingAttribute(script, attribute)) {
                 Script block = script.getFirstBlock();
-                checkIfTargetJsonReached(cssSelector, block, path, attribute, selectors);
+                checkIfTargetJsonReached(cssSelector, block, path.copy(), attribute, selectors);
                 path.getLast().increment();
                 script = removeBlockFromScript(script, block);
             }
@@ -64,7 +64,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
             if (script.containsAttribute(attribute))
                 addDataNodeSelector(selectors, cssSelector, script, path, attribute);
         } else {
-            scriptBlockDFS(removeOuterBrackets(script), attribute, selectors, path.copy(), cssSelector);
+            scriptBlockDFS(removeOuterBrackets(script), attribute, selectors, path, cssSelector);
         }
     }
 
