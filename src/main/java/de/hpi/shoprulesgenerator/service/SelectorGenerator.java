@@ -9,8 +9,7 @@ import java.util.List;
 abstract class SelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String[] REGEX_CHARACTERS = new String[] { "\\", ".", "[", "]", "{", "}", "(", ")",
-            "*",
-            "+", "-", "?", "^", "$", "|" };
+            "*", "+", "-", "?", "^", "$", "|" };
 
     abstract List<Selector> buildSelectors(Document html, String attribute);
 
