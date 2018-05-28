@@ -52,8 +52,8 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.BRAND, toList(brandName.getValue()));
     }
 
-    public void setPrice(Property<Map<String, Integer>> price) {
-        getOfferAttributes().put(OfferAttribute.PRICE, toList(price.getValue()));
+    public void setPrices(Property<Map<String, Integer>> prices) {
+        getOfferAttributes().put(OfferAttribute.PRICE, toList(prices.getValue()));
     }
 
     public void setDescription(Property<Map<String, String>> description) {
