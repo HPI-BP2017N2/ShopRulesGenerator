@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Selector.SelectorParseException;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
@@ -19,20 +20,25 @@ class DataExtractor {
     private DataExtractor() {}
 
     static String extract(Document document, Selector selector) {
-        String extractedData = "";
-        switch (selector.getNodeType()) {
-            case ATTRIBUTE_NODE:
-                extractedData = extract(document, (AttributeNodeSelector) selector);
-                break;
-            case DATA_NODE:
-                extractedData = extract(document, (DataNodeSelector) selector);
-                break;
-            case TEXT_NODE:
-                extractedData = extract(document, (TextNodeSelector) selector);
-                break;
+        try {
+            String extractedData = "";
+            switch (selector.getNodeType()) {
+                case ATTRIBUTE_NODE:
+                    extractedData = extract(document, (AttributeNodeSelector) selector);
+                    break;
+                case DATA_NODE:
+                    extractedData = extract(document, (DataNodeSelector) selector);
+                    break;
+                case TEXT_NODE:
+                    extractedData = extract(document, (TextNodeSelector) selector);
+                    break;
+            }
+            extractedData = cutAdditionalText(selector, extractedData);
+            return extractedData;
+        } catch (SelectorParseException e) {
+            log.warn("Could not extract using selector: " + selector, e);
+            return "";
         }
-        extractedData = cutAdditionalText(selector, extractedData);
-        return extractedData;
     }
 
     private static String cutAdditionalText(Selector selector, String extractedData) {
@@ -53,11 +59,11 @@ class DataExtractor {
     private static String extract(Document document, DataNodeSelector selector) {
         Elements elements = document.select(selector.getCssSelector());
         if (elements.isEmpty()) return "";
-        Script block = new Script(elements.get(0).html());
+        Script block = new Script(elements.get(0).data());
         try {
             for (PathID id : selector.getPathToBlock()) {
-                if (id != selector.getPathToBlock().getFirst()) block = removeOuterBrackets(block);
                 block = block.getBlock(id.getId());
+                if (id != selector.getPathToBlock().getLast()) block = removeOuterBrackets(block);
             }
             return extract(block, selector);
         } catch (BlockNotFoundException ignored) {
@@ -67,9 +73,17 @@ class DataExtractor {
 
     private static String extract(Script block, DataNodeSelector selector) {
         try {
-            return JsonPath.parse(block.getContent()).read(selector.getJsonPath());
+            return dataToString(JsonPath.parse(block.getContent()).read(selector.getJsonPath()));
         } catch (InvalidJsonException | PathNotFoundException ignored) {
             return "";
+        }
+    }
+
+    private static String dataToString(Object jsonData) {
+        try {
+            return (String) jsonData;
+        } catch (ClassCastException e) {
+            return String.valueOf(jsonData);
         }
     }
 

@@ -52,8 +52,8 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.BRAND, toList(brandName.getValue()));
     }
 
-    public void setPrice(Property<Map<String, Integer>> price) {
-        getOfferAttributes().put(OfferAttribute.PRICE, toList(price.getValue()));
+    public void setPrices(Property<Map<String, Integer>> prices) {
+        getOfferAttributes().put(OfferAttribute.PRICE, toList(prices.getValue()));
     }
 
     public void setDescription(Property<Map<String, String>> description) {
@@ -64,8 +64,8 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.URL, toList(urls.getValue()));
     }
 
-    public void setImageUrls(Property<Map<String, String[]>> imageUrls) {
-        getOfferAttributes().put(OfferAttribute.IMAGE_URLS, toList(imageUrls));
+    public void setImageUrls(Property<Map<String, List<String>>> imageUrls) {
+        getOfferAttributes().put(OfferAttribute.IMAGE_URLS, mapWithArrayToList(imageUrls.getValue()));
     }
 
     List<String> get(OfferAttribute attribute) {
@@ -82,6 +82,12 @@ public class IdealoOffer {
 
     private List<String> toList(Map<String, ?> map) {
         return map.values().stream().map(String::valueOf).collect(Collectors.toList());
+    }
+
+    private List<String> mapWithArrayToList(Map<String, List<String>> map) {
+        return map.values().stream()
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     private List<String> toList(String[] array) {

@@ -4,9 +4,13 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 @Getter
@@ -19,21 +23,32 @@ class Script {
     private String content;
 
     Script(String content) {
-        getObjectMapper().configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        allowAllObjectMapperFeatures();
         setContent(content);
     }
 
+    private void allowAllObjectMapperFeatures() {
+        Arrays.stream(JsonParser.Feature.values()).forEach(feature -> getObjectMapper().configure(feature, true));
+    }
+
     Script getBlock(int blockIndex) {
-        int bracketCount = blockIndex;
+        int currentBlockID = 0;
+        int bracketCount = 0;
         int startIndex = getContent().indexOf('{');
-        if (startIndex == -1) throw new BlockNotFoundException("There is no with the given block index " + blockIndex);
+        if (startIndex == -1) throw new BlockNotFoundException("There is no block within this script");
+
         for (int iChar = startIndex; iChar < getContent().length(); iChar++) {
             char c = getContent().charAt(iChar);
             if (c == '{') bracketCount++;
             else if (c == '}') bracketCount--;
-            if (bracketCount == 0) return new Script(getContent().substring(startIndex, iChar + 1));
+            if (bracketCount == 0) {
+                if (currentBlockID == blockIndex) return new Script(getContent().substring(startIndex, iChar + 1));
+                startIndex = getContent().indexOf('{', iChar + 1);
+                iChar = startIndex - 1;
+                currentBlockID++;
+            }
         }
-        throw new BlockNotFoundException("Malformed JSON! Could not find block");
+        throw new BlockNotFoundException("Could not find block with id " + blockIndex);
     }
 
     Script getFirstBlock() {

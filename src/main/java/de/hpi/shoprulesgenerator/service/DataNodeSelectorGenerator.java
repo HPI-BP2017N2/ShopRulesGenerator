@@ -38,33 +38,34 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
     private List<Selector> buildDataNodeSelectorDFS(Element occurrence, String attribute) {
         List<Selector> selectors = new LinkedList<>();
         scriptBlockDFS(
-                buildCssSelectorForOccurrence(occurrence),
                 new Script(occurrence.data()),
-                new Path(),
                 attribute,
-                selectors);
+                selectors,
+                new Path(),
+                buildCssSelectorForOccurrence(occurrence)
+        );
         return selectors;
     }
 
-
-    private void scriptBlockDFS(String cssSelector, Script script, Path path, String attribute, List<Selector> selectors) {
-        if (script.isJSONLeaf() && script.containsAttribute(attribute)) {
-            addDataNodeSelector(selectors, cssSelector, script, path, attribute);
-        } else {
-            script = removeOuterBrackets(script);
-            goOneLevelDeeperInBlockTree(script, attribute, selectors, path, cssSelector);
-        }
-    }
-
-    private void goOneLevelDeeperInBlockTree(Script script, String attribute, List<Selector> selectors, Path path, String cssSelector) {
+    private void scriptBlockDFS(Script script, String attribute, List<Selector> selectors, Path path, String cssSelector) {
+        path.add(new PathID());
         try {
             while (hasBlockContainingAttribute(script, attribute)) {
                 Script block = script.getFirstBlock();
-                scriptBlockDFS(cssSelector, block, path.cloneAndAddPathID(), attribute, selectors);
+                checkIfTargetJsonReached(cssSelector, block, path.copy(), attribute, selectors);
                 path.getLast().increment();
                 script = removeBlockFromScript(script, block);
             }
         } catch (BlockNotFoundException e) { log.warn("Invalid Javascript - skipping script: " + script.getContent()); }
+    }
+
+    private void checkIfTargetJsonReached(String cssSelector, Script script, Path path, String attribute, List<Selector> selectors) {
+        if (script.isJSONLeaf()) {
+            if (script.containsAttribute(attribute))
+                addDataNodeSelector(selectors, cssSelector, script, path, attribute);
+        } else {
+            scriptBlockDFS(removeOuterBrackets(script), attribute, selectors, path, cssSelector);
+        }
     }
 
     private void addDataNodeSelector(List<Selector> selectors, String cssSelector, Script script, Path path, String attribute) {
@@ -98,7 +99,13 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
     private DataNodeSelector buildSelector(String cssSelector, Script snippet, Path path, String attribute) throws
             CouldNotDetermineJsonPathException {
         String jsonPath = getJsonPath(snippet, attribute);
-        String textContainingAttribute = JsonPath.parse(snippet.getContent()).read(jsonPath);
+        Object data = JsonPath.parse(snippet.getContent()).read(jsonPath);
+        String textContainingAttribute;
+        try {
+            textContainingAttribute = (String) data;
+        } catch (ClassCastException e) {
+            textContainingAttribute = String.valueOf(data);
+        }
         return new DataNodeSelector(cssSelector, attribute, textContainingAttribute, path, jsonPath);
     }
 

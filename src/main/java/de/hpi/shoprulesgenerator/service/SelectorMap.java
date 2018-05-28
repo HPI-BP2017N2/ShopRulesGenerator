@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
 
-    @Getter(AccessLevel.PRIVATE) private static final String[] PRICE_SEPARATORS = new String[] {".", ","};
+    @Getter(AccessLevel.PRIVATE) private static final String[] PRICE_SEPARATORS = new String[] {"", ".", ","};
 
     static SelectorMap buildSelectorMap(IdealoOffers idealoOffers, List<SelectorGenerator> generators) {
         SelectorMap selectorMap = new SelectorMap();
@@ -58,7 +58,6 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
     }
 
     private static Set<Selector> buildPriceSpecificSelectors(IdealoOffer offer, String price, List<SelectorGenerator> generators) {
-
         return Arrays.stream(getPRICE_SEPARATORS())
                 .map(separator -> buildSelectorForOfferAttributeValue(offer, new StringBuilder(price).insert(price
                         .length() - 2, separator).toString(), generators))
