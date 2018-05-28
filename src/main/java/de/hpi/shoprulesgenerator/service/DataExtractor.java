@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Selector.SelectorParseException;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
@@ -19,20 +20,25 @@ class DataExtractor {
     private DataExtractor() {}
 
     static String extract(Document document, Selector selector) {
-        String extractedData = "";
-        switch (selector.getNodeType()) {
-            case ATTRIBUTE_NODE:
-                extractedData = extract(document, (AttributeNodeSelector) selector);
-                break;
-            case DATA_NODE:
-                extractedData = extract(document, (DataNodeSelector) selector);
-                break;
-            case TEXT_NODE:
-                extractedData = extract(document, (TextNodeSelector) selector);
-                break;
+        try {
+            String extractedData = "";
+            switch (selector.getNodeType()) {
+                case ATTRIBUTE_NODE:
+                    extractedData = extract(document, (AttributeNodeSelector) selector);
+                    break;
+                case DATA_NODE:
+                    extractedData = extract(document, (DataNodeSelector) selector);
+                    break;
+                case TEXT_NODE:
+                    extractedData = extract(document, (TextNodeSelector) selector);
+                    break;
+            }
+            extractedData = cutAdditionalText(selector, extractedData);
+            return extractedData;
+        } catch (SelectorParseException e) {
+            log.warn("Could not extract using selector: " + selector, e);
+            return "";
         }
-        extractedData = cutAdditionalText(selector, extractedData);
-        return extractedData;
     }
 
     private static String cutAdditionalText(Selector selector, String extractedData) {
