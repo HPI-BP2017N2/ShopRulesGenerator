@@ -32,17 +32,23 @@ class Script {
     }
 
     Script getBlock(int blockIndex) {
-        int bracketCount = blockIndex;
+        int currentBlockID = 0;
+        int bracketCount = 0;
         int startIndex = getContent().indexOf('{');
-        if (startIndex == -1) throw new BlockNotFoundException("There is no block with the given block index " +
-                blockIndex);
+        if (startIndex == -1) throw new BlockNotFoundException("There is no block within this script");
+
         for (int iChar = startIndex; iChar < getContent().length(); iChar++) {
             char c = getContent().charAt(iChar);
             if (c == '{') bracketCount++;
             else if (c == '}') bracketCount--;
-            if (bracketCount == 0) return new Script(getContent().substring(startIndex, iChar + 1));
+            if (bracketCount == 0) {
+                if (currentBlockID == blockIndex) return new Script(getContent().substring(startIndex, iChar + 1));
+                startIndex = getContent().indexOf('{', iChar + 1);
+                iChar = startIndex - 1;
+                currentBlockID++;
+            }
         }
-        throw new BlockNotFoundException("Malformed JSON! Could not find block");
+        throw new BlockNotFoundException("Could not find block with id " + blockIndex);
     }
 
     Script getFirstBlock() {
