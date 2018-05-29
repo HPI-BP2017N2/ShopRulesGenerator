@@ -3,7 +3,6 @@ package de.hpi.shoprulesgenerator.properties;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,16 +19,13 @@ import org.springframework.web.client.RestTemplate;
 @EnableConfigurationProperties(IdealoBridgeConfig.class)
 public class OAuthConfig {
 
-    @Autowired
-    private IdealoBridgeConfig clientProperties;
-
     @Bean
-    public RestTemplate oAuthRestTemplate() {
+    public RestTemplate oAuthRestTemplate(IdealoBridgeConfig config) {
         ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
         resourceDetails.setId("1");
-        resourceDetails.setClientId(getClientProperties().getOAuth2ClientId());
-        resourceDetails.setClientSecret(getClientProperties().getOAuth2ClientSecret());
-        resourceDetails.setAccessTokenUri(getClientProperties().getAccessTokenURI());
+        resourceDetails.setClientId(config.getOAuth2ClientId());
+        resourceDetails.setClientSecret(config.getOAuth2ClientSecret());
+        resourceDetails.setAccessTokenUri(config.getAccessTokenURI());
         return new OAuth2RestTemplate(resourceDetails, new DefaultOAuth2ClientContext());
     }
 }

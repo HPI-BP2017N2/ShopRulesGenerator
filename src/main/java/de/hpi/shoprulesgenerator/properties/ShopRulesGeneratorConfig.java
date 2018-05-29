@@ -32,4 +32,13 @@ public class ShopRulesGeneratorConfig {
     @NotBlank
     private String cleanUrlRoute;
 
+    @Min(1)
+    private int corePoolSize;
+
+    @Min(1)
+    private int maxPoolSize;
+
+    @Min(1)
+    private int queueCapacity;
+
 }
