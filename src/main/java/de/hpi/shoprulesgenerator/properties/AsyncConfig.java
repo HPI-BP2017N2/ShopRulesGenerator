@@ -11,12 +11,13 @@ import java.util.concurrent.Executor;
 @EnableAsync
 public class AsyncConfig {
 
+
     @Bean(name = "srgThreadPoolTaskExecutor")
-    public Executor srgThreadPoolTaskExecutor() {
+    public Executor srgThreadPoolTaskExecutor(ShopRulesGeneratorConfig config) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(20);
-        executor.setQueueCapacity(5000);
+        executor.setCorePoolSize(config.getCorePoolSize());
+        executor.setMaxPoolSize(config.getMaxPoolSize());
+        executor.setQueueCapacity(config.getQueueCapacity());
         executor.setThreadNamePrefix("SRG-Threadpool-");
         executor.initialize();
         return executor;
