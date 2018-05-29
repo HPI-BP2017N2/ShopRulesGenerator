@@ -18,6 +18,18 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*";
 
+    /**
+     * This method generates exactly two selectors for every DOM attribute node, where the product attribute is contained.
+     *
+     *
+     * One selector uses an absolute path and another one a more flexible approach.
+     * 1) A selector using an absolute path and the attribute key to reference the desired value.
+     * 2) A selector using <code>all</code> key-value pairs of this attribute, to indicate the desired one.
+     * @param html - A web page, which gets used to generate the selectors.
+     * @param attribute - The value, the selectors should get build for.
+     * @return A list of two selectors, referencing the value in the specified HTML document.
+     *
+     */
     @SuppressWarnings("ConstantConditions") //null check not necessary, since we only select valid ones
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
