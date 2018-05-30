@@ -86,3 +86,4 @@ JSoup is used for parsing CSS-Selectors and JsonPath is used to navigate through
 - Investigate how to let JSoup handle quotes within attribute names.
 - Make an improvement, where the price we want to look up (like $12.00) gets converted to ($12.0) since a few shops 
 use this format in their script tags.
+- Implement a better strategy for loading sample offers and think about making the selectors depend on category.
