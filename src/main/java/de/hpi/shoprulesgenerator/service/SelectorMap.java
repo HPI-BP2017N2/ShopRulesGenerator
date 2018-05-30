@@ -58,6 +58,7 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
     }
 
     private static Set<Selector> buildPriceSpecificSelectors(IdealoOffer offer, String price, List<SelectorGenerator> generators) {
+        if (price.length() < 2) return buildSelectorForOfferAttributeValue(offer, price, generators);
         return Arrays.stream(getPRICE_SEPARATORS())
                 .map(separator -> buildSelectorForOfferAttributeValue(offer, new StringBuilder(price).insert(price
                         .length() - 2, separator).toString(), generators))
