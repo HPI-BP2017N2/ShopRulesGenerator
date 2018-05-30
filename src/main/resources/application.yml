@@ -32,6 +32,6 @@ shoprulesgenerator-settings:
 logging:
   level:
     org.springframework.web: ERROR
-    de.deeps: DEBUG
+    de.hpi: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36}: %msg%n"
