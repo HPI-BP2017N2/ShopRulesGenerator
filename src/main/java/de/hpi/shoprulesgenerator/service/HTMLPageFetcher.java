@@ -56,7 +56,7 @@ public class HTMLPageFetcher {
             log.info("(" + getFORMAT().format(progress) + "%) Fetching " + cleanUrl + "...");
             Document fetchedPage = Jsoup.connect(cleanUrl).userAgent(getConfig().getUserAgent()).get();
             offer.setFetchedPage(fetchedPage);
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             log.warn("Could not fetch page for: " + cleanUrl, e);
         }
     }

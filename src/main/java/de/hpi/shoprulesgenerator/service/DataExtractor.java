@@ -10,7 +10,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.jsoup.select.Selector.SelectorParseException;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
@@ -36,7 +35,7 @@ class DataExtractor {
             }
             extractedData = cutAdditionalText(selector, extractedData);
             return extractedData;
-        } catch (SelectorParseException e) {
+        } catch (Exception e) {
             log.warn("Could not extract using selector: " + selector, e);
             return "";
         }
