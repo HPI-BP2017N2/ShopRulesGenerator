@@ -15,6 +15,14 @@ public class TextNodeSelectorGenerator extends SelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*:containsOwn(#attr#)";
 
+    /**
+     * This method generates selectors for every DOM text node, where the product attribute is
+     * contained.<br/>
+     * @param html A web page, which is used to generate the selectors.
+     * @param attribute The value, for which the selectors should get build for.
+     * @return A list of selectors, referencing the occurrences in the specified HTML document.
+     *
+     */
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
         return html.select(buildCSSQuery(attribute))

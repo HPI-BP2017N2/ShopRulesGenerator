@@ -2,7 +2,11 @@ package de.hpi.shoprulesgenerator.api;
 
 import de.hpi.shoprulesgenerator.dto.SuccessResponse;
 import de.hpi.shoprulesgenerator.exception.ShopRulesDoNotExistException;
+import de.hpi.shoprulesgenerator.persistence.ShopRules;
 import de.hpi.shoprulesgenerator.service.IShopRulesGeneratorService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class ShopRulesGeneratorController {
 
     private final IShopRulesGeneratorService service;
+
+    @ApiOperation(value = "Get rules for specific shop", response = ShopRules.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved shop rules"),
+            @ApiResponse(code = 404, message = "The rules are not existing yet. Try again later.")})
 
     @RequestMapping(value = "/getRules/{shopID}", method = GET, produces = "application/json")
     public HttpEntity<Object> getRules(@PathVariable long shopID) throws ShopRulesDoNotExistException {

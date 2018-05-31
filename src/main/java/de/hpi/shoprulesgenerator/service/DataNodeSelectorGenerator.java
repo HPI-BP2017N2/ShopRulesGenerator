@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static de.hpi.shoprulesgenerator.service.JsonPathBuilder.getJsonPath;
+import static de.hpi.shoprulesgenerator.service.JsonPathBuilder.createJsonPath;
 
 @Getter(AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
@@ -25,6 +25,12 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "script";
 
+    /**
+     * This method generates selectors for occurrences of the wanted attribute within valid JSON in script tags.
+     * @param html The document where the script tags are located.
+     * @param attribute The value, for which the selectors should get build for.
+     * @return A list of selectors, referencing the occurrences of the value in the specified HTML document.
+     */
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {
         return html.select(getCSS_QUERY_TEMPLATE())
@@ -42,8 +48,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
                 attribute,
                 selectors,
                 new Path(),
-                buildCssSelectorForOccurrence(occurrence)
-        );
+                buildCssSelectorForOccurrence(occurrence));
         return selectors;
     }
 
@@ -98,7 +103,7 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     private DataNodeSelector buildSelector(String cssSelector, Script snippet, Path path, String attribute) throws
             CouldNotDetermineJsonPathException {
-        String jsonPath = getJsonPath(snippet, attribute);
+        String jsonPath = createJsonPath(snippet, attribute);
         Object data = JsonPath.parse(snippet.getContent()).read(jsonPath);
         String textContainingAttribute;
         try {

@@ -18,6 +18,21 @@ public class AttributeNodeSelectorGenerator extends TextNodeSelectorGenerator {
 
     @Getter(AccessLevel.PRIVATE) private static final String CSS_QUERY_TEMPLATE = "*";
 
+    /**
+     * This method generates exactly two selectors for every DOM attribute node, where the product attribute is
+     * contained.<br/>
+     * One selector uses an absolute path and another one a more flexible approach.<br />
+     * <ol>
+     *     <li>A selector using an absolute path and the attribute key to reference the desired value.</li>
+     *     <li>A selector using <b>all</b> key-value pairs of the DOM node.</li>
+     * </ol>
+     * <i>Attention: This method possibly generates selectors, which contain double quotes and Jsoup is not capable of
+     * parsing them. Nevertheless they are valid selectors.</i>
+     * @param html A web page, which is used to generate the selectors.
+     * @param attribute The value, for which the selectors should get build for.
+     * @return A list of selectors, referencing the occurrences in the specified HTML document.
+     *
+     */
     @SuppressWarnings("ConstantConditions") //null check not necessary, since we only select valid ones
     @Override
     public List<Selector> buildSelectors(Document html, String attribute) {

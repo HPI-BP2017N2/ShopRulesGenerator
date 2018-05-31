@@ -20,7 +20,7 @@ class DataExtractor {
 
     static String extract(Document document, Selector selector) {
         try {
-            String extractedData = "";
+            String extractedData;
             switch (selector.getNodeType()) {
                 case ATTRIBUTE_NODE:
                     extractedData = extract(document, (AttributeNodeSelector) selector);
@@ -31,6 +31,7 @@ class DataExtractor {
                 case TEXT_NODE:
                     extractedData = extract(document, (TextNodeSelector) selector);
                     break;
+                default: return "";
             }
             extractedData = cutAdditionalText(selector, extractedData);
             return extractedData;
