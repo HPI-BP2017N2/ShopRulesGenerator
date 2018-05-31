@@ -10,15 +10,15 @@ The microservice is written in Java and uses the Spring framework.
 To run the microservice it is required to set up the following:
 
 1. MongoDB
-...The MongoDB is used to store generated shop rules (in the collection named 'shopRules').
+<br />The MongoDB is used to store generated shop rules (in the collection named 'shopRules').
 
 2. Idealo bridge
-...The ShopRulesGenerator uses idealo offers to analyse the structure of shop product pages. 
+<br />The ShopRulesGenerator uses idealo offers to analyse the structure of shop product pages. 
 The idealo bridge provides these to the ShopRulesGenerator. 
 Furthermore the resolving from shopID to shop root url is used to remove the root url from image links.
 
 3. [URL-Cleaner microservice](https://github.com/HPI-BP2017N2/URLCleaner)
-...Since the urls of the idealo offers can contain click trackers, it is required to clean them before visiting.
+<br />Since the urls of the idealo offers can contain click trackers, it is required to clean them before visiting.
 
 ### Configuration
 
@@ -70,11 +70,11 @@ There are three types of selectors.
 ```html <span key='wanted value'>not interesting</span>```
 3. DateNode: These ones are script tags, where the content is contained within JSON.
 ```html <script>function c() { let products: { 'ean': 'wanted value'}}</script>```
-...The DataNode consists of a cssSelector, a block path and a jsonPath. 
-...A block is specified as a text which is surrounded by { and }.
-...The css selector helps finding the correct script tag.
-...The block path helps do navigate through javascript, to find the correct block.
-...The json path is used after parsing the found block as json to get the wanted value.
+<br />The DataNode consists of a cssSelector, a block path and a jsonPath. 
+<br />A block is specified as a text which is surrounded by { and }.
+<br />The css selector helps finding the correct script tag.
+<br />The block path helps do navigate through javascript, to find the correct block.
+<br />The json path is used after parsing the found block as json to get the wanted value.
 
 ### Further information
 
