@@ -56,8 +56,8 @@ public class IdealoOffer {
         getOfferAttributes().put(OfferAttribute.PRICE, toList(prices.getValue()));
     }
 
-    public void setDescription(Property<Map<String, String>> description) {
-        getOfferAttributes().put(OfferAttribute.DESCRIPTION, toList(description.getValue()));
+    public void setDescriptions(Property<Map<String, String>> descriptions) {
+        getOfferAttributes().put(OfferAttribute.DESCRIPTION, toList(descriptions.getValue()));
     }
 
     public void setUrls(Property<Map<String, String>> urls) {
