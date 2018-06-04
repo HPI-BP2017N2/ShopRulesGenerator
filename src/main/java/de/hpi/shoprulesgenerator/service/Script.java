@@ -44,6 +44,7 @@ class Script {
             if (bracketCount == 0) {
                 if (currentBlockID == blockIndex) return new Script(getContent().substring(startIndex, iChar + 1));
                 startIndex = getContent().indexOf('{', iChar + 1);
+                if (startIndex == -1) break;
                 iChar = startIndex - 1;
                 currentBlockID++;
             }
