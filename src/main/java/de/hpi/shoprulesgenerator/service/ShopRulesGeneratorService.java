@@ -24,9 +24,9 @@ public class ShopRulesGeneratorService implements IShopRulesGeneratorService {
 
     @Override
     @Cacheable(value = "rules")
-    public ShopRules getRules(long shopID) throws ShopRulesDoNotExistException {
+    public ShopRules getRules(long shopID, boolean forceUpdate) throws ShopRulesDoNotExistException {
         ShopRules rules = getShopRulesRepository().findByShopID(shopID);
-        if (rules == null) {
+        if (rules == null || forceUpdate) {
             if (getShopRulesGenerator().isCurrentlyGenerating(shopID)) {
                 throw new ShopRulesDoNotExistException("There are no rules for the shop " + shopID + ". The shop " +
                         "rules generation process is already running.");

@@ -11,9 +11,10 @@ public interface IShopRulesGeneratorService {
      * If the rules do not exist, they get generated asynchronously.<br />
      * Multiple calls will not trigger multiple generation processes.
      * @param shopID The id of the shop
+     * @param forceUpdate If the stored rule should get overwritten, if existing.
      * @return The rules for the shop with the id
      * @throws ShopRulesDoNotExistException Indicates, that rules are not existing yet.
      */
-    ShopRules getRules(long shopID) throws ShopRulesDoNotExistException;
+    ShopRules getRules(long shopID, boolean forceUpdate) throws ShopRulesDoNotExistException;
 
 }

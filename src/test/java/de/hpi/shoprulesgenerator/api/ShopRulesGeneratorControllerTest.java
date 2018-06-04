@@ -13,11 +13,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +35,7 @@ public class ShopRulesGeneratorControllerTest {
     @Test
     public void getRulesHappyPath() throws Exception {
         doReturn(new ShopRules(null, getEXAMPLE_SHOP_ID())).when(getShopRulesGeneratorService()).getRules
-                (getEXAMPLE_SHOP_ID());
+                (getEXAMPLE_SHOP_ID(), false);
         getMockMvc()
                 .perform(get("/getRules/" + getEXAMPLE_SHOP_ID()))
                 .andExpect(jsonPath("data.shopID").value(getEXAMPLE_SHOP_ID()))
@@ -48,7 +46,8 @@ public class ShopRulesGeneratorControllerTest {
 
     @Test
     public void getRules404() throws Exception {
-        doThrow(ShopRulesDoNotExistException.class).when(getShopRulesGeneratorService()).getRules(getEXAMPLE_SHOP_ID());
+        doThrow(ShopRulesDoNotExistException.class).when(getShopRulesGeneratorService()).getRules(getEXAMPLE_SHOP_ID
+                (), false);
         getMockMvc()
                 .perform(get("/getRules/" + getEXAMPLE_SHOP_ID()))
                 .andExpect(status().isNotFound());

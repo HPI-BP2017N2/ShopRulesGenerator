@@ -82,14 +82,14 @@ public class ShopRulesGeneratorServiceTest {
         doReturn(new IdealoOffers()).when(getIdealoBridge()).getSampleOffers(anyLong());
         doNothing().when(getFetcher()).fetchHTMLPages(any(), anyLong());
         doAnswer(returnsFirstArg()).when(getShopRulesRepository()).save(any());
-        await().until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) == null);
+        await().until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID(), false) == null);
     }
 
     @Test
     public void getExistingRules() throws ShopRulesDoNotExistException {
         doReturn(new ShopRules(null, getEXAMPLE_SHOP_ID())).when(getShopRulesRepository()).findByShopID
                 (getEXAMPLE_SHOP_ID());
-        getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID());
+        getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID(), false);
     }
 
     @Test
@@ -104,7 +104,7 @@ public class ShopRulesGeneratorServiceTest {
         }).when(getShopRulesRepository()).save(any());
         given().ignoreException(ShopRulesDoNotExistException.class)
                 .await().atMost(30, SECONDS)
-                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID(), false) != null);
     }
 
     private void selectorsScoringCorrect(ShopRules rules) {
@@ -135,7 +135,7 @@ public class ShopRulesGeneratorServiceTest {
         }).when(getShopRulesRepository()).save(any());
         given().ignoreException(ShopRulesDoNotExistException.class)
                 .await().atMost(30, SECONDS)
-                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID(), false) != null);
     }
 
     private void selectorsNormalizedScoringCorrect(ShopRules rules) {
@@ -157,7 +157,7 @@ public class ShopRulesGeneratorServiceTest {
         }).when(getShopRulesRepository()).save(any());
         given().ignoreException(ShopRulesDoNotExistException.class)
                 .await().atMost(30, SECONDS)
-                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID()) != null);
+                .until(() -> getShopRulesGeneratorService().getRules(getEXAMPLE_SHOP_ID(), false) != null);
     }
 
     private void generateRulesForPrice(ShopRules rules) {

@@ -13,7 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -29,8 +32,13 @@ public class ShopRulesGeneratorController {
             @ApiResponse(code = 200, message = "Successfully retrieved shop rules"),
             @ApiResponse(code = 404, message = "The rules are not existing yet. Try again later.")})
 
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     @RequestMapping(value = "/getRules/{shopID}", method = GET, produces = "application/json")
-    public HttpEntity<Object> getRules(@PathVariable long shopID) throws ShopRulesDoNotExistException {
-        return new SuccessResponse<>(getService().getRules(shopID)).withMessage("Shop rules found.").send();
+    public HttpEntity<Object> getRules(@PathVariable long shopID,
+                                       @RequestParam(required = false) Optional<Boolean> forceUpdate)
+            throws ShopRulesDoNotExistException {
+        return new SuccessResponse<>(getService().getRules(shopID, forceUpdate.orElse(false)))
+                .withMessage("Shop rules found.")
+                .send();
     }
 }
