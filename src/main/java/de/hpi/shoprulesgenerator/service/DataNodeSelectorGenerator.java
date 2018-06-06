@@ -1,5 +1,6 @@
 package de.hpi.shoprulesgenerator.service;
 
+import com.jayway.jsonpath.InvalidPathException;
 import com.jayway.jsonpath.JsonPath;
 import de.hpi.shoprulesgenerator.exception.BlockNotFoundException;
 import de.hpi.shoprulesgenerator.exception.CouldNotDetermineJsonPathException;
@@ -104,7 +105,12 @@ public class DataNodeSelectorGenerator extends TextNodeSelectorGenerator {
     private DataNodeSelector buildSelector(String cssSelector, Script snippet, Path path, String attribute) throws
             CouldNotDetermineJsonPathException {
         String jsonPath = createJsonPath(snippet, attribute);
-        Object data = JsonPath.parse(snippet.getContent()).read(jsonPath);
+        Object data;
+        try {
+            data = JsonPath.parse(snippet.getContent()).read(jsonPath);
+        } catch (InvalidPathException e) {
+            throw new CouldNotDetermineJsonPathException("Failed to build proper JsonPath " + jsonPath);
+        }
         String textContainingAttribute;
         try {
             textContainingAttribute = (String) data;
