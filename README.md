@@ -89,3 +89,4 @@ use this format in their script tags.
 - Implement a better strategy for loading sample offers and think about making the selectors depend on category.
 - Apply DataNodeSelector - generation not only to script tags, instead take a look on "onclick" methods in <a> - tags too.
 - Improve fetching of html files. JSoup complains about missing certificates for some sites. Furthermore some sites return 403 if custom user agent is used. If these issues gets resolved, there should be much less empty shop rules.
+- Check if rules are up to date automatically, by fetching a sample offer and its html file and applying the existing rules. Compare the results to know, if the structure of the shop has changed.
