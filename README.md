@@ -88,3 +88,4 @@ JSoup is used for parsing CSS-Selectors and JsonPath is used to navigate through
 use this format in their script tags.
 - Implement a better strategy for loading sample offers and think about making the selectors depend on category.
 - Apply DataNodeSelector - generation not only to script tags, instead take a look on "onclick" methods in <a> - tags too.
+- Improve fetching of html files. JSoup complains about missing certificates for some sites. Furthermore some sites return 403 if custom user agent is used. If these issues gets resolved, there should be much less empty shop rules.
