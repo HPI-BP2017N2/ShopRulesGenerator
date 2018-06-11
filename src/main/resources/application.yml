@@ -25,7 +25,7 @@ shoprulesgenerator-settings:
   urlCleanerRoot: ${URLCLEANER_IP}
   cleanUrlRoute: "/clean/"
   scoreThreshold: 0.5
-  corePoolSize: 2
+  corePoolSize: 4
   maxPoolSize: 5
   queueCapacity: 20
 
