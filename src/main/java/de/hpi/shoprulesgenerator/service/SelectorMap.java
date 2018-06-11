@@ -2,10 +2,12 @@ package de.hpi.shoprulesgenerator.service;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
 
     @Getter(AccessLevel.PRIVATE) private static final String[] PRICE_SEPARATORS = new String[] {"", ".", ","};
@@ -69,7 +71,14 @@ public class SelectorMap extends EnumMap<OfferAttribute, Set<Selector>> {
     private static Set<Selector> buildSelectorForOfferAttributeValue(IdealoOffer offer, String offerAttributeValue,
                                                                      List<SelectorGenerator> generators) {
         return generators.stream()
-                .map(generator -> generator.buildSelectors(offer.getFetchedPage(), offerAttributeValue))
+                .map(generator -> {
+                        try {
+                            return generator.buildSelectors(offer.getFetchedPage(), offerAttributeValue);
+                        } catch (Exception e) {
+                            log.error("Could not build selector for attribute " + offerAttributeValue, e);
+                            return new LinkedList<Selector>();
+                        }
+                    })
                 .flatMap(Collection::stream)
                 .collect(Collectors.toSet());
     }
